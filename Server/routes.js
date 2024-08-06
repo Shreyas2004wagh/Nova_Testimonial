@@ -1,48 +1,44 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { UserModal } = require('./models/User'); // Assuming User.js is renamed to User.js and exports UserModal
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { Users } = require("./models/User");
 
-// POST /createUser - Create a new user
-router.post("/createUser", async (req, res) => {
+router.post("/SignUp", async (req, res) => {
   try {
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
-
-    // Check if the user already exists
-    const existingUser = await UserModal.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+    const { firstName, lastName, email, password, phoneNum } = req.body;
+    if (!firstName || !lastName || !email || !password || !phoneNum) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Hashing the password when signing up
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const existingUser = await Users.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
 
-    // Creating a new user
-    const newUser = new UserModal({ 
-      firstName, 
-      lastName, 
-      email, 
-      phoneNumber, 
-      password: hashedPassword 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new Users({
+      firstName,
+      lastName,
+      email,
+      phoneNum,
+      password: hashedPassword,
     });
 
-    // Saving the user to the database
     await newUser.save();
+    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET);
 
-    // Responding with the user data (excluding password)
-    res.status(201).json({ 
-      message: "User created successfully", 
-      user: { 
-        firstName: newUser.firstName, 
-        lastName: newUser.lastName, 
-        email: newUser.email, 
-        phoneNumber: newUser.phoneNumber 
-      } 
-    });
+    res.status(201).json({ message: "User signed up successfully", token });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Server Error');
+    console.error("SignUp Error:", error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      const message = `${
+        field.charAt(0).toUpperCase() + field.slice(1)
+      } already exists`;
+      return res.status(400).json({ message });
+    }
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
