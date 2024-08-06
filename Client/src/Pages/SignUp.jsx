@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './SignUp.css';
 
 const SignUp = () => {
@@ -8,16 +9,45 @@ const SignUp = () => {
     email: '',
     phoneNumber: '',
     password: '',
-    confirmPassword: '',
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic
+
+    try {
+      const response = await axios.post('http://localhost:5000/SignUp', {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phoneNum: form.phoneNumber, // Ensure the key matches the backend schema
+        password: form.password,
+      });
+
+      if (response.status === 201) {
+        alert("Sign up successful!");
+        setForm({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          password: '',
+        });
+      } else {
+        alert("Sign up failed!");
+      }
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      if (error.response) {
+        console.error("Server responded with:", error.response.data);
+        alert(`Sign up failed: ${error.response.data.message}`);
+      } else {
+        alert("An error occurred. Please try again later.");
+      }
+    }
   };
 
   return (
@@ -84,16 +114,6 @@ const SignUp = () => {
               type="password"
               name="password"
               value={form.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={form.confirmPassword}
               onChange={handleChange}
               required
             />
