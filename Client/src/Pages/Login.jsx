@@ -28,8 +28,14 @@ const Login = () => {
 
       setSuccess(response.data.message);
       setError('');
+
+      // Store the email in session storage
+      sessionStorage.setItem('userEmail', form.email);
+
       alert('Login successful');
-      navigate('/create-space'); // Navigate to /create-space
+      
+      // Navigate to /dashboard
+      navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
         setError(error.response.data.message);

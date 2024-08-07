@@ -39,7 +39,7 @@ const SignUp = () => {
           phoneNumber: '',
           password: '',
         });
-        navigate('/create-space'); // Navigate to /create-space
+        navigate('/dashboard'); // Navigate to /dashboard
       } else {
         alert("Sign up failed!");
       }

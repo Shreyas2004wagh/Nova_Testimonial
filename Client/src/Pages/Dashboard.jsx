@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import './Styles/Dashboard.css';
 import happyGif from '../Images/happy.gif';
 import palmGif from '../Images/palm.gif';
@@ -11,10 +12,6 @@ const Dashboard = () => {
       <nav className="navbar">
         <div className="logo">
           <h1>Nova</h1>
-        </div>
-        <div className="nav-links">
-          <button className="login">Login</button>
-          <button className="signup">Signup</button>
         </div>
       </nav>
       <header className="hero-section">
@@ -50,7 +47,9 @@ const Dashboard = () => {
           <div className="no-space">
             <p>No space yet, add a new one?</p>
           </div>
-          <button className="create-space">+ Create a new space</button>
+          <Link to="/create-space">
+            <button className="create-space">+ Create a new space</button>
+          </Link>
         </div>
       </section>
     </div>
