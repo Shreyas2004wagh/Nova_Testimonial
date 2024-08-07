@@ -1,0 +1,79 @@
+:root {
+    --primary-color: #6200ea;
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --input-background: #333333;
+    --input-border: #444444;
+    --button-color: #8d3eed;
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.spaceform-container {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.spaceform-content {
+    background: #1e1e1e;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+}
+
+.spaceform-content h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.spaceform-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+}
+
+.submit-button {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    cursor: pointer;
+    margin-top: 2rem;
+    font-size: 1rem;
+}
