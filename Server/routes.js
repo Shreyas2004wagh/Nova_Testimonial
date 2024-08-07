@@ -110,4 +110,17 @@ router.post('/addSpace', async (req, res) => {
 }
 );
 
+router.get('/getSpaces', async (req, res) => {
+  try {
+    const spaces = await Space.find();
+    res.status(200).json(spaces);
+  } catch (error) {
+    console.error('Error fetching spaces:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+});
+
 module.exports = router;
+ 
