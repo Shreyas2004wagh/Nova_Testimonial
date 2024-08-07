@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './Login.css';
+import './Styles/Login.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,6 +29,7 @@ const Login = () => {
       setSuccess(response.data.message);
       setError('');
       alert('Login successful');
+      navigate('/create-space'); // Navigate to /create-space
     } catch (error) {
       if (error.response && error.response.data) {
         setError(error.response.data.message);

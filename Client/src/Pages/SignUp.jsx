@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './SignUp.css';
+import { useNavigate } from 'react-router-dom';
+import './Styles/SignUp.css';
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,8 @@ const SignUp = () => {
     phoneNumber: '',
     password: '',
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,6 +39,7 @@ const SignUp = () => {
           phoneNumber: '',
           password: '',
         });
+        navigate('/create-space'); // Navigate to /create-space
       } else {
         alert("Sign up failed!");
       }
