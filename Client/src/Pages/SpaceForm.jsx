@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Styles/SpaceForm.css';
 
 const SpaceForm = () => {
@@ -10,6 +11,9 @@ const SpaceForm = () => {
     questions: '',
     starRatings: false,
   });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -52,13 +56,25 @@ const SpaceForm = () => {
         questions: '',
         starRatings: false,
       });
-      
+
+      setIsSubmitted(true); // Set the submission state to true
+
       console.log(result);
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to create space. Check console for details.');
     }
   };
+
+  useEffect(() => {
+    if (isSubmitted) {
+      const timer = setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000); // Redirect after 2 seconds
+
+      return () => clearTimeout(timer); // Clear the timeout if the component unmounts
+    }
+  }, [isSubmitted, navigate]);
 
   return (
     <div className="spaceform-container">
@@ -132,6 +148,12 @@ const SpaceForm = () => {
             Create Space
           </button>
         </form>
+        {isSubmitted && (
+          <div className="redirect-container">
+            <p>Redirecting to Dashboard...</p>
+            <Link to="/dashboard" className="redirect-link">Go to Dashboard</Link>
+          </div>
+        )}
       </div>
     </div>
   );
