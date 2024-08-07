@@ -6,10 +6,10 @@ const UserSchema = new mongoose.Schema(
     lastName: String,
     email: { type: String, unique: true, required: true }, // Unique and required
     phoneNum: { type: Number, required: true }, // Not unique
-    password: { type: String, required: true }, // Required
+    password: { type: String, required: true },
   },
   { versionKey: false }
 );
 
-const Users = mongoose.model("User", UserSchema); // Ensure the model name starts with an uppercase letter
+const Users = mongoose.model("User", UserSchema); 
 module.exports = { Users };

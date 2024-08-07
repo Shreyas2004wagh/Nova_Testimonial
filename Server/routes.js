@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Users } = require("./models/User");
+const { Space } = require("./models/Space");
 
 router.post("/SignUp", async (req, res) => {
   try {
@@ -77,5 +78,36 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+router.post('/addSpace', async (req, res) => {
+  try {
+    const { spacename, publicUrl, headerTitle, customMessage, questions, starRatings } = req.body;
+
+    // Create a new space document
+    const newSpace = new Space({
+      spacename,
+      publicUrl,
+      headerTitle,
+      customMessage,
+      questions,
+      starRatings,
+    });
+
+    // Save the new space document to the database
+    const savedSpace = await newSpace.save();
+
+    // Send a success response
+    res.status(201).json({
+      message: 'Space created successfully',
+      space: savedSpace,
+    });
+  } catch (error) {
+    console.error('Error creating space:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+);
 
 module.exports = router;
