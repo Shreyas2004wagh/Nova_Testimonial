@@ -19,7 +19,7 @@ const Dashboard = () => {
       </nav>
       <header className="hero-section">
         <h1><mark>A robust way to get</mark> customer's feedbacks</h1>
-        <p>Collect simple customer feedback throughout their journey, improve their experience to drive real change.</p>
+        <p>Collect simple customer feedback throughout their journey, improve their experience to drive real change</p>
         <div className="cta-buttons">
           <button className="start-feedback">Start Collecting Feedback</button>
           <button className="see-how">See how it works</button>
