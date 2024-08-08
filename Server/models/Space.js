@@ -9,6 +9,7 @@ const spaceSchema = new mongoose.Schema(
     questions: [{ type: String }],
     starRatings: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
+    user_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   },
   { versionKey: false }
 );

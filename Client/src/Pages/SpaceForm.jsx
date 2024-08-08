@@ -26,9 +26,16 @@ const SpaceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert("User ID is not found in local storage. Please log in again.");
+      return;
+    }
+
     const formattedData = {
       ...formData,
-      questions: formData.questions.split(',').map((q) => q.trim()), // Convert comma-separated questions into an array
+      questions: formData.questions.split(',').map((q) => q.trim()),
+      user_Id: userId,
     };
 
     try {
@@ -41,25 +48,30 @@ const SpaceForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.status === 400) {
+          const result = await response.json();
+          alert(result.message); // Show error message from the server
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } else {
+        const result = await response.json();
+        alert('Space created successfully!');
+
+        // Clear the form after successful submission
+        setFormData({
+          spacename: '',
+          publicUrl: '',
+          headerTitle: '',
+          customMessage: '',
+          questions: '',
+          starRatings: false,
+        });
+
+        setIsSubmitted(true);
+
+        console.log(result);
       }
-
-      const result = await response.json();
-      alert('Space created successfully!');
-      
-      // Clear the form after successful submission
-      setFormData({
-        spacename: '',
-        publicUrl: '',
-        headerTitle: '',
-        customMessage: '',
-        questions: '',
-        starRatings: false,
-      });
-
-      setIsSubmitted(true); // Set the submission state to true
-
-      console.log(result);
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to create space. Check console for details.');
@@ -70,9 +82,9 @@ const SpaceForm = () => {
     if (isSubmitted) {
       const timer = setTimeout(() => {
         navigate('/dashboard');
-      }, 2000); // Redirect after 2 seconds
+      }, 2000);
 
-      return () => clearTimeout(timer); // Clear the timeout if the component unmounts
+      return () => clearTimeout(timer);
     }
   }, [isSubmitted, navigate]);
 
