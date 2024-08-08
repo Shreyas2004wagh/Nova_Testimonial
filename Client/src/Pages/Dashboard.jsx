@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link
 import './Styles/Dashboard.css';
 import happyGif from '../Images/happy.gif';
@@ -7,6 +7,36 @@ import angryGif from '../Images/angry.gif';
 import cryingGif from '../Images/crying.gif';
 
 const Dashboard = () => {
+  const [spaces, setSpaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          throw new Error('User ID not found in local storage');
+        }
+
+        const response = await fetch(`http://localhost:5000/getSpacesByUserId/${userId}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setSpaces(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSpaces();
+  }, []);
+
   return (
     <div className="dashboard">
       <nav className="navbar">
@@ -45,11 +75,32 @@ const Dashboard = () => {
         <h2>Spaces</h2>
         <div className="spaces-content">
           <div className="no-space">
-            <p>No space yet, add a new one?</p>
+            {spaces.length === 0 ? (
+              <>
+                <p>No space yet, add a new one?</p>
+                <Link to="/create-space">
+                  <button className="create-space">+ Create a new space</button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="space-tiles">
+                  {spaces.map((space) => (
+                    <div className="space-tile" key={space._id}>
+                      <h3>{space.spacename}</h3>
+                      <p>{space.headerTitle}</p>
+                      <p>{space.customMessage}</p>
+                      <p>{space.questions.join(', ')}</p>
+                      {space.starRatings ? <p>Star Ratings Enabled</p> : <p>No Star Ratings</p>}
+                    </div>
+                  ))}
+                </div>
+                <Link to="/create-space">
+                  <button className="create-space">+ Create a new space</button>
+                </Link>
+              </>
+            )}
           </div>
-          <Link to="/create-space">
-            <button className="create-space">+ Create a new space</button>
-          </Link>
         </div>
       </section>
     </div>
