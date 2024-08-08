@@ -4,6 +4,7 @@ import SignUp from './Pages/SignUp';
 import Login from './Pages/Login';
 import SpaceForm from './Pages/SpaceForm';
 import Dashboard from './Pages/Dashboard';
+import SpacePage from './Pages/SpacePage';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/create-space" element={<SpaceForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/:publicUrl" element={<SpacePage />} />
       </Routes>
     </BrowserRouter>
   );
