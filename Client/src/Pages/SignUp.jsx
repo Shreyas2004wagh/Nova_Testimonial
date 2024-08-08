@@ -32,6 +32,9 @@ const SignUp = () => {
 
       if (response.status === 201) {
         alert("Sign up successful!");
+         // Storing email in local storage
+         localStorage.setItem('userEmailSignup', form.email);
+         localStorage.setItem('userId', response.data._id);
         setForm({
           firstName: '',
           lastName: '',

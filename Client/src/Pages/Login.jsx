@@ -30,9 +30,10 @@ const Login = () => {
       setError('');
 
       // Store the email in session storage
-      sessionStorage.setItem('userEmail', form.email);
+      localStorage.setItem('userEmailLogin', form.email);
 
       alert('Login successful');
+      localStorage.setItem('userId', response.data._id); 
       
       // Navigate to /dashboard
       navigate('/dashboard');
