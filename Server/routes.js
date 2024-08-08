@@ -77,10 +77,19 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
 router.post('/addSpace', async (req, res) => {
   try {
-    const { spacename, publicUrl, headerTitle, customMessage, questions, starRatings } = req.body;
+    const { spacename, publicUrl, headerTitle, customMessage, questions, starRatings, user_Id } = req.body;
+
+    if (!user_Id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Check if a space with the same publicUrl already exists
+    const existingSpace = await Space.findOne({ publicUrl });
+    if (existingSpace) {
+      return res.status(400).json({ message: 'Public URL already exists' });
+    }
 
     // Create a new space document
     const newSpace = new Space({
@@ -90,6 +99,7 @@ router.post('/addSpace', async (req, res) => {
       customMessage,
       questions,
       starRatings,
+      user_Id,
     });
 
     // Save the new space document to the database
@@ -102,12 +112,11 @@ router.post('/addSpace', async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating space:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
-}
-);
+});
+
+
 
 router.get('/getSpaces', async (req, res) => {
   try {
