@@ -104,11 +104,12 @@ router.post('/addSpace', async (req, res) => {
 
     // Save the new space document to the database
     const savedSpace = await newSpace.save();
-
+    const spaceLink = `http://localhost:5173/${publicUrl}`;
     // Send a success response
     res.status(201).json({
-      message: 'Space created successfully',
+      message: "Space created successfully",
       space: savedSpace,
+      link: spaceLink,
     });
   } catch (error) {
     console.error('Error creating space:', error);
@@ -143,6 +144,55 @@ router.get('/getSpacesByUserId/:userId', async (req, res) => {
   }
 });
 
+router.get("/space/:publicUrl", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    res.status(200).json(space);
+  } catch (error) {
+    console.error("Error fetching space:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/space/:publicUrl/feedback", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const { name, email, responses } = req.body;
+
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    // Create the feedback object
+    const feedback = {
+      name,
+      email,
+      responses: space.questions.map((question, index) => ({
+        question,
+        answer: responses[index] || "",
+      })),
+    };
+
+    // Add feedback to the space
+    space.feedback.push(feedback);
+    await space.save();
+
+    res
+      .status(201)
+      .json({ message: "Feedback submitted successfully", feedback });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;
 

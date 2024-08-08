@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+const feedbackSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  responses: [{ question: String, answer: String }],
+  submittedAt: { type: Date, default: Date.now },
+});
+
 const spaceSchema = new mongoose.Schema(
   {
     spacename: { type: String, required: true },
@@ -9,7 +16,12 @@ const spaceSchema = new mongoose.Schema(
     questions: [{ type: String }],
     starRatings: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
-    user_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    user_Id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    feedback: [feedbackSchema], // Nested feedback schema
   },
   { versionKey: false }
 );

@@ -58,6 +58,8 @@ const SpaceForm = () => {
         const result = await response.json();
         alert('Space created successfully!');
 
+         alert(`Your space link: ${result.link}`);
+
         // Clear the form after successful submission
         setFormData({
           spacename: '',
