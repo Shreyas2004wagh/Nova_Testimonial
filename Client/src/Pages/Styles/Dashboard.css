@@ -31,6 +31,8 @@ body {
   height: 7vh;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
   background-color: var(--primary-color);
   color: var(--button-text-color);
 }
@@ -40,21 +42,22 @@ body {
   font-size: 2rem;
 }
 
-.nav-links {
+.nav-icons {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 10px;
 }
 
-.login, .signup {
-  padding: 0.5rem 1rem;
+.profile-button {
+  background: none;
   border: none;
-  border-radius: 4px;
-  background-color: var(--button-text-color);
-  color: var(--button-color);
+  color: var(--button-text-color);
   cursor: pointer;
-  font-size: 1rem;
+  transition: transform 0.2s;
+}
+
+.profile-button:hover {
+  transform: scale(1.1);
 }
 
 .hero-section {
@@ -84,7 +87,8 @@ body {
   justify-content: center;
 }
 
-.cta-buttons .start-feedback, .cta-buttons .see-how {
+.cta-buttons .start-feedback,
+.cta-buttons .see-how {
   padding: 0.75rem 2rem;
   border: none;
   border-radius: 4px;
@@ -108,6 +112,7 @@ body {
   justify-content: center;
   gap: 2rem;
   padding: 2rem 0;
+  flex-wrap: wrap;
 }
 
 .gifs .gif {
@@ -116,13 +121,15 @@ body {
   border-radius: 50%;
 }
 
-.overview, .spaces {
+.overview,
+.spaces {
   width: 90vw;
   max-width: 1200px;
   margin-top: 2rem;
 }
 
-.overview h2, .spaces h2 {
+.overview h2,
+.spaces h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
   color: var(--highlight-color);
@@ -131,6 +138,7 @@ body {
 .overview-cards {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .card {
@@ -140,7 +148,7 @@ body {
   text-align: center;
   border: 1px solid var(--card-border-color);
   color: var(--card-text-color);
-  flex: 1;
+  flex: 1 1 200px;
 }
 
 .card h3 {
@@ -160,6 +168,7 @@ body {
 
 .no-space {
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .create-space {
@@ -171,12 +180,19 @@ body {
   cursor: pointer;
   font-size: 1rem;
   margin-bottom: 1rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.create-space:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.05);
 }
 
 .space-tiles {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  justify-content: center;
 }
 
 .space-tile {
@@ -188,6 +204,7 @@ body {
   text-align: center;
   cursor: pointer;
   flex: 1 1 calc(33% - 2rem);
+  max-width: 300px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -204,4 +221,29 @@ body {
 .space-tile:active {
   transform: scale(0.95);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .cta-buttons .start-feedback,
+  .cta-buttons .see-how {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+  }
+
+  .gifs .gif {
+    width: 100px;
+    height: 100px;
+  }
+
+  .card {
+    flex: 1 1 100%;
+  }
+
+  .space-tile {
+    flex: 1 1 100%;
+  }
 }
