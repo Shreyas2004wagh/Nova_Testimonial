@@ -1,0 +1,120 @@
+:root {
+    --primary-color: #6200ea;
+    --secondary-color: #bb86fc;
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --input-background: #1e1e1e;
+    --input-border: #333333;
+    --button-color: #6200ea;
+    --button-text-color: #ffffff;
+    --highlight-color: #ffeb3b;
+    --font-family: 'Roboto', sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.space-page {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 3rem;
+    background-color: var(--input-background);
+    border-radius: 12px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s;
+}
+
+.space-page:hover {
+    transform: scale(1.02);
+}
+
+.space-page h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--highlight-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.space-page p {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 2.5rem; /* Increased margin for more spacing */
+}
+
+label {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--highlight-color);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 97%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    background-color: var(--input-background);
+    border: 2px solid var(--input-border);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-bottom: 1.5rem; /* Added margin to separate inputs from text */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    border-color: var(--highlight-color);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.button-container {
+    text-align: center; /* Center align the button */
+}
+
+button[type="submit"] {
+    width: 45%;
+    padding: 1rem; 
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--button-text-color);
+    background-color: var(--button-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 2rem;
+    margin-bottom: 3rem; 
+    transition: background-color 0.3s, transform 0.3s;
+    
+}
+
+button[type="submit"]:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98);
+}
