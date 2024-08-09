@@ -218,6 +218,49 @@ router.get('/space/:publicUrl/feedbackDetails', async (req, res) => {
   }
 });
 
+router.get("/users", async (req, res) => {
+  try {
+    const users = await Users.find(); 
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error });
+  }
+});
+
+router.get("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await Users.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user data", error });
+  }
+});
+
+router.put("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedUser = await Users.findByIdAndUpdate(
+      userId,
+      req.body,
+      { new: true, runValidators: true } 
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user data", error });
+  }
+});
+
 
 module.exports = router;
 

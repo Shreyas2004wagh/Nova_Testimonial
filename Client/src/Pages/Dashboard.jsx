@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { CgProfile } from 'react-icons/cg';
 import './Styles/Dashboard.css';
 import happyGif from '../Images/happy.gif';
 import palmGif from '../Images/palm.gif';
@@ -43,11 +44,20 @@ const Dashboard = () => {
     navigate('/space-details');
   };
 
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
   return (
     <div className="dashboard">
       <nav className="navbar">
         <div className="logo">
           <h1>Nova</h1>
+        </div>
+        <div className="nav-icons">
+          <button className="profile-button" onClick={handleProfileClick}>
+            <CgProfile size={40} />
+          </button>
         </div>
       </nav>
       <header className="hero-section">
@@ -84,7 +94,11 @@ const Dashboard = () => {
         </Link>
         <div className="spaces-content">
           <div className="no-space">
-            {spaces.length === 0 ? (
+            {loading ? (
+              <p>Loading spaces...</p>
+            ) : error ? (
+              <p>Error: {error}</p>
+            ) : spaces.length === 0 ? (
               <p>No space yet, add a new one?</p>
             ) : (
               <div className="space-tiles">
