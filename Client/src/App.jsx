@@ -5,6 +5,7 @@ import Login from './Pages/Login';
 import SpaceForm from './Pages/SpaceForm';
 import Dashboard from './Pages/Dashboard';
 import SpacePage from './Pages/SpacePage';
+import SpaceDetails from './Pages/SpaceDetails';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/create-space" element={<SpaceForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/:publicUrl" element={<SpacePage />} />
+        <Route path="/space-details" element={<SpaceDetails />} />
       </Routes>
     </BrowserRouter>
   );

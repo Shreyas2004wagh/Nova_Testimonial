@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link, useNavigate } from 'react-router-dom';
 import './Styles/Dashboard.css';
 import happyGif from '../Images/happy.gif';
 import palmGif from '../Images/palm.gif';
@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [spaces, setSpaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSpaces = async () => {
@@ -36,6 +37,11 @@ const Dashboard = () => {
 
     fetchSpaces();
   }, []);
+
+  const handleSpaceClick = (space) => {
+    sessionStorage.setItem('selectedSpace', JSON.stringify(space));
+    navigate('/space-details');
+  };
 
   return (
     <div className="dashboard">
@@ -73,32 +79,25 @@ const Dashboard = () => {
       </section>
       <section className="spaces">
         <h2>Spaces</h2>
+        <Link to="/create-space">
+          <button className="create-space">+ Create a new space</button>
+        </Link>
         <div className="spaces-content">
           <div className="no-space">
             {spaces.length === 0 ? (
-              <>
-                <p>No space yet, add a new one?</p>
-                <Link to="/create-space">
-                  <button className="create-space">+ Create a new space</button>
-                </Link>
-              </>
+              <p>No space yet, add a new one?</p>
             ) : (
-              <>
-                <div className="space-tiles">
-                  {spaces.map((space) => (
-                    <div className="space-tile" key={space._id}>
-                      <h3>{space.spacename}</h3>
-                      <p>{space.headerTitle}</p>
-                      <p>{space.customMessage}</p>
-                      <p>{space.questions.join(', ')}</p>
-                      {space.starRatings ? <p>Star Ratings Enabled</p> : <p>No Star Ratings</p>}
-                    </div>
-                  ))}
-                </div>
-                <Link to="/create-space">
-                  <button className="create-space">+ Create a new space</button>
-                </Link>
-              </>
+              <div className="space-tiles">
+                {spaces.map((space) => (
+                  <div
+                    className="space-tile"
+                    key={space._id}
+                    onClick={() => handleSpaceClick(space)}
+                  >
+                    <h3>{space.spacename}</h3>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
