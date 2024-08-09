@@ -1,0 +1,102 @@
+:root {
+    --primary-color: #6200ea;
+    --secondary-color: #bb86fc;
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --input-background: #1e1e1e;
+    --input-border: #333333;
+    --button-color: #6200ea;
+    --button-text-color: #ffffff;
+    --highlight-color: #ffeb3b;
+    --font-family: 'Roboto', sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.space-details {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 3rem;
+    background-color: var(--input-background);
+    border-radius: 12px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s;
+}
+
+.space-details:hover {
+    transform: scale(1.02);
+}
+
+.space-details h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--highlight-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.space-details p {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.space-details h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.space-details .feedback-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.feedback-card {
+    background-color: var(--background-color);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feedback-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.feedback-card h4 {
+    font-size: 1.3rem;
+    color: var(--highlight-color);
+    margin-bottom: 1rem;
+}
+
+.feedback-card p {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.feedback-card .response {
+    margin-top: 1rem;
+}
+
+.feedback-card .response strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+

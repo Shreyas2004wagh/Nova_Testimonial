@@ -194,6 +194,31 @@ router.post("/space/:publicUrl/feedback", async (req, res) => {
   }
 });
 
+router.get('/space/:publicUrl/feedbackDetails', async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    // Extract the feedback array from the space document
+    const feedbackDetails = space.feedback.map(fb => ({
+      name: fb.name,
+      email: fb.email,
+      responses: fb.responses, // array of question-answer pairs
+      submittedAt: fb.submittedAt, // includes submission date and time
+    }));
+
+    res.status(200).json(feedbackDetails);
+  } catch (error) {
+    console.error("Error fetching feedback details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 module.exports = router;
 
 
