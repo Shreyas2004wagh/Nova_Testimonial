@@ -13,6 +13,9 @@ const SpaceForm = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [showCopiedModal, setShowCopiedModal] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -56,11 +59,9 @@ const SpaceForm = () => {
         }
       } else {
         const result = await response.json();
-        alert('Space created successfully!');
+        setGeneratedLink(result.link);
+        setShowModal(true);
 
-         alert(`Your space link: ${result.link}`);
-
-        // Clear the form after successful submission
         setFormData({
           spacename: '',
           publicUrl: '',
@@ -71,8 +72,6 @@ const SpaceForm = () => {
         });
 
         setIsSubmitted(true);
-
-        console.log(result);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -80,11 +79,18 @@ const SpaceForm = () => {
     }
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(generatedLink).then(() => {
+      setShowModal(false);
+      setShowCopiedModal(true);
+    });
+  };
+
   useEffect(() => {
     if (isSubmitted) {
       const timer = setTimeout(() => {
         navigate('/dashboard');
-      }, 2000);
+      }, 10000);
 
       return () => clearTimeout(timer);
     }
@@ -169,6 +175,27 @@ const SpaceForm = () => {
           </div>
         )}
       </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Space Created Successfully!</h2>
+            <p>Your space link has been generated:</p>
+            <p className="generated-link">{generatedLink}</p>
+            <button onClick={handleCopyLink} className="copy-button">Copy Link to Clipboard</button>
+          </div>
+        </div>
+      )}
+
+      {showCopiedModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Link Copied!</h2>
+            <p>Your space link has been copied to the clipboard:</p>
+            <p className="generated-link">{generatedLink}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

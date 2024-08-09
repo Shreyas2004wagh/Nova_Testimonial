@@ -19,17 +19,19 @@ body {
 }
 
 .space-details {
-    max-width: 800px;
+    max-width: 900px;
     margin: 4rem auto;
     padding: 3rem;
     background-color: var(--input-background);
-    border-radius: 12px;
-    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
-    transition: transform 0.3s;
+    border-radius: 15px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.7);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: justify; /* Ensure consistent text alignment */
 }
 
 .space-details:hover {
     transform: scale(1.02);
+    box-shadow: 0px 12px 36px rgba(0, 0, 0, 0.8);
 }
 
 .space-details h1 {
@@ -37,66 +39,86 @@ body {
     font-weight: 700;
     color: var(--highlight-color);
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    text-align: center;
 }
 
 .space-details p {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--secondary-color);
-    text-align: center;
     margin-bottom: 2.5rem;
-    line-height: 1.6;
+    line-height: 1.8;
+    text-align: center; /* Align text consistently */
 }
 
 .space-details h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 600;
     color: var(--primary-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     text-align: center;
+    letter-spacing: 1px;
 }
 
 .space-details .feedback-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
 .feedback-card {
     background-color: var(--background-color);
     border: 1px solid var(--input-border);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.6);
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .feedback-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+    transform: translateY(-7px);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
 }
 
 .feedback-card h4 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--highlight-color);
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center; /* Center align text */
 }
 
 .feedback-card p {
-    font-size: 1rem;
+    font-size: 1.2rem; /* Increase font size for better readability */
     color: var(--text-color);
-    margin: 0.5rem 0;
-    line-height: 1.5;
+    margin: 0.6rem 0;
+    line-height: 1.7;
+    text-align: justify; /* Justify text within feedback cards */
 }
 
 .feedback-card .response {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--input-border);
 }
 
 .feedback-card .response strong {
     color: var(--primary-color);
-    font-weight: 600;
+    font-weight: 700;
 }
 
+.space-details ul {
+    padding-left: 20px; /* Add padding to the list for better alignment */
+    margin-bottom: 2rem;
+}
+
+.space-details ul li {
+    font-size: 1.3rem; /* Increase font size for questions */
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
