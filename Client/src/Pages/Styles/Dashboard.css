@@ -17,6 +17,7 @@ body {
   font-family: var(--font-family);
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow-x: hidden;
 }
 
 .dashboard {
@@ -32,6 +33,7 @@ body {
   justify-content: space-between;
   background-color: var(--primary-color);
   color: var(--button-text-color);
+  
 }
 
 .logo h1 {
@@ -116,7 +118,7 @@ body {
 }
 
 .overview, .spaces {
-  width: 90%;
+  width: 90vw;
   max-width: 1200px;
   margin-top: 2rem;
 }
