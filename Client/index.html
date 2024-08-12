@@ -9,5 +9,21 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      let timeout;
+
+      document.addEventListener('scroll', () => {
+        // Clear any existing timeout
+        clearTimeout(timeout);
+
+        // Show scrollbar (assumes the class scrollable-element is handled via CSS)
+        document.body.classList.add('scrollable-element');
+
+        // Set timeout to hide scrollbar after 5 seconds
+        timeout = setTimeout(() => {
+          document.body.classList.remove('scrollable-element');
+        }, 5000);
+      });
+    </script>
   </body>
 </html>
