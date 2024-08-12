@@ -11,6 +11,8 @@ const Dashboard = () => {
   const [spaces, setSpaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [textFeedbackCount, setTextFeedbackCount] = useState(0);
+  const [videoFeedbackCount, setVideoFeedbackCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +31,18 @@ const Dashboard = () => {
 
         const result = await response.json();
         setSpaces(result);
+
+        // Fetch feedback counts for each space
+        if (result.length > 0) {
+          const feedbackCountsResponse = await fetch(`http://localhost:5000/space/${result[0].publicUrl}/feedbackCounts`);
+          if (!feedbackCountsResponse.ok) {
+            throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
+          }
+          const feedbackCounts = await feedbackCountsResponse.json();
+          setTextFeedbackCount(feedbackCounts.textFeedbackCount);
+          setVideoFeedbackCount(feedbackCounts.videoFeedbackCount);
+        }
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -79,11 +93,11 @@ const Dashboard = () => {
         <div className="overview-cards">
           <div className="card video-feedback">
             <h3>Video Feedback</h3>
-            <p>0</p>
+            <p>{videoFeedbackCount}</p>
           </div>
           <div className="card text-feedback">
             <h3>Text Feedback</h3>
-            <p>0</p>
+            <p>{textFeedbackCount}</p>
           </div>
         </div>
       </section>
