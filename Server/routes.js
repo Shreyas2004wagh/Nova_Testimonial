@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
 
+// Sign-up Route
 router.post("/SignUp", async (req, res) => {
   try {
     const { firstName, lastName, email, password, phoneNum } = req.body;
@@ -27,22 +28,24 @@ router.post("/SignUp", async (req, res) => {
     });
 
     await newUser.save();
-    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET);
+    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // token expiration
+    });
 
-    res.status(201).json({ message: "User signed up successfully", token, _id: newUser._id });
+    res
+      .status(201)
+      .json({
+        message: "User signed up successfully",
+        token,
+        _id: newUser._id,
+      });
   } catch (error) {
     console.error("SignUp Error:", error);
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyValue)[0];
-      const message = `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
-      return res.status(400).json({ message });
-    }
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-
-
+// Login Route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -58,40 +61,39 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const username = user.username;
-    jwt.sign(
-      { email: user.email, username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-      (err, token) => {
-        if (err) {
-          console.error("Error signing JWT:", err);
-          return res.status(500).json({ message: "Error generating token" });
-        }
-        res.status(200).json({ message: "Login successful", token, username, _id: user._id });
-      }
-    );
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ message: "Login successful", token, _id: user._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-router.post('/addSpace', async (req, res) => {
+// Add Space Route
+router.post("/addSpace", async (req, res) => {
   try {
-    const { spacename, publicUrl, headerTitle, customMessage, questions, starRatings, user_Id } = req.body;
+    const {
+      spacename,
+      publicUrl,
+      headerTitle,
+      customMessage,
+      questions,
+      starRatings,
+      user_Id,
+    } = req.body;
 
     if (!user_Id) {
-      return res.status(400).json({ message: 'User ID is required' });
+      return res.status(400).json({ message: "User ID is required" });
     }
 
-    // Check if a space with the same publicUrl already exists
     const existingSpace = await Space.findOne({ publicUrl });
     if (existingSpace) {
-      return res.status(400).json({ message: 'Public URL already exists' });
+      return res.status(400).json({ message: "Public URL already exists" });
     }
 
-    // Create a new space document
     const newSpace = new Space({
       spacename,
       publicUrl,
@@ -102,48 +104,47 @@ router.post('/addSpace', async (req, res) => {
       user_Id,
     });
 
-    // Save the new space document to the database
     const savedSpace = await newSpace.save();
     const spaceLink = `http://localhost:5173/${publicUrl}`;
-    // Send a success response
+
     res.status(201).json({
       message: "Space created successfully",
       space: savedSpace,
       link: spaceLink,
     });
   } catch (error) {
-    console.error('Error creating space:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error creating space:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-
-router.get('/getSpaces', async (req, res) => {
+// Get Spaces Route
+router.get("/getSpaces", async (req, res) => {
   try {
     const spaces = await Space.find();
     res.status(200).json(spaces);
   } catch (error) {
-    console.error('Error fetching spaces:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-    });
+    console.error("Error fetching spaces:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.get('/getSpacesByUserId/:userId', async (req, res) => {
+// Get Spaces by User ID Route
+router.get("/getSpacesByUserId/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const spaces = await Space.find({ user_Id: userId });
     if (!spaces.length) {
-      return res.status(404).json({ message: 'No spaces found for this user' });
+      return res.status(404).json({ message: "No spaces found for this user" });
     }
     res.status(200).json(spaces);
   } catch (error) {
-    console.error('Error fetching spaces:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching spaces:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
+// Get Space by Public URL Route
 router.get("/space/:publicUrl", async (req, res) => {
   try {
     const { publicUrl } = req.params;
@@ -160,10 +161,11 @@ router.get("/space/:publicUrl", async (req, res) => {
   }
 });
 
+// Submit Feedback Route
 router.post("/space/:publicUrl/feedback", async (req, res) => {
   try {
     const { publicUrl } = req.params;
-    const { name, email, responses } = req.body;
+    const { name, email, responses, feedbackType } = req.body;
 
     const space = await Space.findOne({ publicUrl });
 
@@ -171,7 +173,6 @@ router.post("/space/:publicUrl/feedback", async (req, res) => {
       return res.status(404).json({ message: "Space not found" });
     }
 
-    // Create the feedback object
     const feedback = {
       name,
       email,
@@ -179,9 +180,9 @@ router.post("/space/:publicUrl/feedback", async (req, res) => {
         question,
         answer: responses[index] || "",
       })),
+      feedbackType: feedbackType || "text", // Default to 'text' if not specified
     };
 
-    // Add feedback to the space
     space.feedback.push(feedback);
     await space.save();
 
@@ -194,7 +195,8 @@ router.post("/space/:publicUrl/feedback", async (req, res) => {
   }
 });
 
-router.get('/space/:publicUrl/feedbackDetails', async (req, res) => {
+
+router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
   try {
     const { publicUrl } = req.params;
     const space = await Space.findOne({ publicUrl });
@@ -203,12 +205,11 @@ router.get('/space/:publicUrl/feedbackDetails', async (req, res) => {
       return res.status(404).json({ message: "Space not found" });
     }
 
-    // Extract the feedback array from the space document
-    const feedbackDetails = space.feedback.map(fb => ({
+    const feedbackDetails = space.feedback.map((fb) => ({
       name: fb.name,
       email: fb.email,
-      responses: fb.responses, // array of question-answer pairs
-      submittedAt: fb.submittedAt, // includes submission date and time
+      responses: fb.responses, 
+      submittedAt: fb.submittedAt, 
     }));
 
     res.status(200).json(feedbackDetails);
@@ -218,15 +219,48 @@ router.get('/space/:publicUrl/feedbackDetails', async (req, res) => {
   }
 });
 
+router.get("/space/:publicUrl/feedbackCounts", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    // Log feedback to check structure
+    console.log("Feedback data:", space.feedback);
+
+    const textFeedbackCount = space.feedback.filter(
+      (fb) => fb.feedbackType === "text"
+    ).length;
+    const videoFeedbackCount = space.feedback.filter(
+      (fb) => fb.feedbackType === "video"
+    ).length;
+
+    // Log counts to verify
+    console.log("Text Feedback Count:", textFeedbackCount);
+    console.log("Video Feedback Count:", videoFeedbackCount);
+
+    res.status(200).json({ textFeedbackCount, videoFeedbackCount });
+  } catch (error) {
+    console.error("Error fetching feedback counts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+// Get All Users Route
 router.get("/users", async (req, res) => {
   try {
-    const users = await Users.find(); 
+    const users = await Users.find();
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });
   }
 });
 
+// Get Specific User by ID Route
 router.get("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
@@ -242,14 +276,14 @@ router.get("/user/:id", async (req, res) => {
   }
 });
 
+// Update User by ID Route
 router.put("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    const updatedUser = await Users.findByIdAndUpdate(
-      userId,
-      req.body,
-      { new: true, runValidators: true } 
-    );
+    const updatedUser = await Users.findByIdAndUpdate(userId, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -261,8 +295,4 @@ router.put("/user/:id", async (req, res) => {
   }
 });
 
-
 module.exports = router;
-
-
- 

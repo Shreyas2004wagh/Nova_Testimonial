@@ -4,8 +4,10 @@ const feedbackSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   responses: [{ question: String, answer: String }],
+  feedbackType: { type: String, enum: ["text", "video"], required: true },
   submittedAt: { type: Date, default: Date.now },
 });
+
 
 const spaceSchema = new mongoose.Schema(
   {
@@ -21,7 +23,7 @@ const spaceSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    feedback: [feedbackSchema], // Nested feedback schema
+    feedback: [feedbackSchema],
   },
   { versionKey: false }
 );
