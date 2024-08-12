@@ -295,4 +295,33 @@ router.put("/user/:id", async (req, res) => {
   }
 });
 
+router.post("/space/:publicUrl/addLink", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const { link } = req.body;
+
+    if (!link) {
+      return res.status(400).json({ message: "Link is required" });
+    }
+
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    space.links.push(link); // Append the new link to the links array
+    await space.save(); // Save the updated space document
+
+    res.status(200).json({
+      message: "Link added successfully",
+      space,
+    });
+  } catch (error) {
+    console.error("Error adding link to space:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 module.exports = router;

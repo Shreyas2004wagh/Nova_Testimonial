@@ -16,6 +16,7 @@ const SpaceForm = () => {
   const [generatedLink, setGeneratedLink] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showCopiedModal, setShowCopiedModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,19 +29,20 @@ const SpaceForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const userId = localStorage.getItem('userId');
     if (!userId) {
       alert("User ID is not found in local storage. Please log in again.");
+      setLoading(true); 
       return;
     }
-
+  
     const formattedData = {
       ...formData,
       questions: formData.questions.split(',').map((q) => q.trim()),
       user_Id: userId,
     };
-
+  
     try {
       const response = await fetch('http://localhost:5000/addSpace', {
         method: 'POST',
@@ -49,7 +51,7 @@ const SpaceForm = () => {
         },
         body: JSON.stringify(formattedData),
       });
-
+  
       if (!response.ok) {
         if (response.status === 400) {
           const result = await response.json();
@@ -59,9 +61,22 @@ const SpaceForm = () => {
         }
       } else {
         const result = await response.json();
-        setGeneratedLink(result.link);
+        const link = result.link;
+        setGeneratedLink(link);
         setShowModal(true);
-
+  
+        // Save the generated link in session storage
+        sessionStorage.setItem('generatedLink', link);
+  
+        // Make a request to add the link to the Space document in the database
+        await fetch(`http://localhost:5000/space/${formData.publicUrl}/addLink`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ link }),
+        });
+  
         setFormData({
           spacename: '',
           publicUrl: '',
@@ -70,15 +85,17 @@ const SpaceForm = () => {
           questions: '',
           starRatings: false,
         });
-
+  
         setIsSubmitted(true);
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to create space. Check console for details.');
+    } finally {
+      setLoading(false); 
     }
   };
-
+  
   const handleCopyLink = () => {
     navigator.clipboard.writeText(generatedLink).then(() => {
       setShowModal(false);
