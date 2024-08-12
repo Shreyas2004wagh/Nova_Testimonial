@@ -1,0 +1,44 @@
+/* Ensure that the body and html elements can scroll */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto; /* This will add a scrollbar to the page */
+    scrollbar-color: #6200ea #333333; /* For non-WebKit browsers */
+    scrollbar-width: thin; /* For non-WebKit browsers */
+}
+
+/* Style the scrollbar (works in WebKit browsers like Chrome, Safari) */
+body::-webkit-scrollbar {
+    width: 16px; /* Increased width for better visibility */
+}
+
+body::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #333333, #1e1e1e); /* Gradient track for a more polished look */
+    border-radius: 10px; /* Smooth rounded corners */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7); /* Soft inner shadow for depth */
+}
+
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7c4dff, #6200ea); /* Gradient thumb for a modern look */
+    border-radius: 10px; /* Rounded corners */
+    border: 2px solid #1e1e1e; /* Clean, defined border */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7); /* Soft inner shadow for the thumb */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for interactions */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #bb86fc; /* Lighter color on hover for better feedback */
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9); /* More prominent shadow on hover */
+}
+
+body::-webkit-scrollbar-corner {
+    background-color: #333333; /* Ensuring the corner between scrollbars looks consistent */
+}
+
+/* Hide scrollbar after 5 seconds of inactivity */
+.scrollable-element {
+    overflow-y: auto;
+    scrollbar-width: thin; /* For non-WebKit browsers */
+    scrollbar-color: #6200ea #333333; /* For non-WebKit browsers */
+}
