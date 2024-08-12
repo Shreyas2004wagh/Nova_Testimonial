@@ -24,6 +24,7 @@ const spaceSchema = new mongoose.Schema(
       required: true,
     },
     feedback: [feedbackSchema],
+    links: [{ type: String }],
   },
   { versionKey: false }
 );
