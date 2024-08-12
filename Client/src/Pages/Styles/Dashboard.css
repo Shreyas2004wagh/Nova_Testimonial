@@ -247,3 +247,8 @@ body {
     flex: 1 1 100%;
   }
 }
+
+.no-space-image {
+  width: 20vw;  /* Adjust the size */
+  margin-bottom: 10px;  /* Add some space below the image */
+}
