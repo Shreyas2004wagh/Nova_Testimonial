@@ -6,6 +6,7 @@ import happyGif from '../Images/happy.gif';
 import palmGif from '../Images/palm.gif';
 import angryGif from '../Images/angry.gif';
 import cryingGif from '../Images/crying.gif';
+import treeImg from '../Images/Tree.svg';
 
 const Dashboard = () => {
   const [spaces, setSpaces] = useState([]);
@@ -22,36 +23,39 @@ const Dashboard = () => {
         if (!userId) {
           throw new Error('User ID not found in local storage');
         }
-
+  
         const response = await fetch(`http://localhost:5000/getSpacesByUserId/${userId}`);
-
-        if (!response.ok) {
+  
+        if (response.status === 404) {
+          setSpaces([]);  // No spaces found, so set spaces to an empty array
+        } else if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        setSpaces(result);
-
-        // Fetch feedback counts for each space
-        if (result.length > 0) {
-          const feedbackCountsResponse = await fetch(`http://localhost:5000/space/${result[0].publicUrl}/feedbackCounts`);
-          if (!feedbackCountsResponse.ok) {
-            throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
+        } else {
+          const result = await response.json();
+          setSpaces(result);
+  
+          // Fetch feedback counts for the first space (if any spaces exist)
+          if (result.length > 0) {
+            const feedbackCountsResponse = await fetch(`http://localhost:5000/space/${result[0].publicUrl}/feedbackCounts`);
+            if (!feedbackCountsResponse.ok) {
+              throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
+            }
+            const feedbackCounts = await feedbackCountsResponse.json();
+            setTextFeedbackCount(feedbackCounts.textFeedbackCount);
+            setVideoFeedbackCount(feedbackCounts.videoFeedbackCount);
           }
-          const feedbackCounts = await feedbackCountsResponse.json();
-          setTextFeedbackCount(feedbackCounts.textFeedbackCount);
-          setVideoFeedbackCount(feedbackCounts.videoFeedbackCount);
         }
-
+  
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchSpaces();
   }, []);
+  
 
   const handleSpaceClick = (space) => {
     sessionStorage.setItem('selectedSpace', JSON.stringify(space));
@@ -113,7 +117,10 @@ const Dashboard = () => {
             ) : error ? (
               <p>Error: {error}</p>
             ) : spaces.length === 0 ? (
+              <>
+              <img src={treeImg} alt="No space available" className="no-space-image"/>;
               <p>No space yet, add a new one?</p>
+              </>
             ) : (
               <div className="space-tiles">
                 {spaces.map((space) => (
