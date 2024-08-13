@@ -24,7 +24,7 @@ const Profile = () => {
           throw new Error('User ID not found in local storage');
         }
 
-        const response = await fetch(`http://localhost:5000/user/${userId}`);
+        const response = await fetch(`https://nova-testimonial.onrender.com/user/${userId}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,7 +64,7 @@ const Profile = () => {
   const handleSaveClick = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await fetch(`http://localhost:5000/user/${userId}`, {
+      const response = await fetch(`https://nova-testimonial.onrender.com/user/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

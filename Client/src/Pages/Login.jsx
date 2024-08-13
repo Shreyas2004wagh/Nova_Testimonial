@@ -21,7 +21,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/login', {
+      const response = await axios.post('https://nova-testimonial.onrender.com/login', {
         email: form.email,
         password: form.password,
       });
