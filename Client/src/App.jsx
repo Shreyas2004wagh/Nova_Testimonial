@@ -7,6 +7,7 @@ import Dashboard from './Pages/Dashboard';
 import SpacePage from './Pages/SpacePage';
 import SpaceDetails from './Pages/SpaceDetails';
 import Profile from './Pages/Profile';
+import LandingPage from './Pages/LandingPage';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/:publicUrl" element={<SpacePage />} />
         <Route path="/space-details" element={<SpaceDetails />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   );

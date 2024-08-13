@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/assets/Designer-DpRG6CNc.png" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Testimonial 🌟</title>
+    <script type="module" crossorigin src="/assets/index-DHkdujSp.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BvEyAjjp.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      let timeout;
+
+      document.addEventListener('scroll', () => {
+        // Clear any existing timeout
+        clearTimeout(timeout);
+
+        // Show scrollbar (assumes the class scrollable-element is handled via CSS)
+        document.body.classList.add('scrollable-element');
+
+        // Set timeout to hide scrollbar after 5 seconds
+        timeout = setTimeout(() => {
+          document.body.classList.remove('scrollable-element');
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>
