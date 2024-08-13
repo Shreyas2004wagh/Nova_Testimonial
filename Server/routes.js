@@ -106,7 +106,7 @@ router.post("/addSpace", async (req, res) => {
     });
 
     const savedSpace = await newSpace.save();
-    const spaceLink = `https://nova-testimonial-1.onrender.com/${publicUrl}`;
+    const spaceLink = `https://client-blush-five.vercel.app/${publicUrl}`;
 
     console.log('Generated link:', spaceLink);
 
