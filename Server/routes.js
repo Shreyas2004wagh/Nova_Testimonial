@@ -73,6 +73,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Add Space Route
+// Add Space Route
 router.post("/addSpace", async (req, res) => {
   try {
     const {
@@ -107,6 +108,8 @@ router.post("/addSpace", async (req, res) => {
     const savedSpace = await newSpace.save();
     const spaceLink = `https://nova-testimonial-1.onrender.com/${publicUrl}`;
 
+    console.log('Generated link:', spaceLink);
+
     res.status(201).json({
       message: "Space created successfully",
       space: savedSpace,
@@ -117,6 +120,7 @@ router.post("/addSpace", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // Get Spaces Route
 router.get("/getSpaces", async (req, res) => {
