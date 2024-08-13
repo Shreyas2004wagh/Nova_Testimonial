@@ -44,7 +44,7 @@ const SpaceForm = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:5000/addSpace', {
+      const response = await fetch('https://nova-testimonial.onrender.com/addSpace', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const SpaceForm = () => {
         sessionStorage.setItem('generatedLink', link);
   
         // Make a request to add the link to the Space document in the database
-        await fetch(`http://localhost:5000/space/${formData.publicUrl}/addLink`, {
+        await fetch(`https://nova-testimonial.onrender.com/space/${formData.publicUrl}/addLink`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

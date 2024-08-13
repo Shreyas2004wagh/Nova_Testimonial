@@ -22,7 +22,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/SignUp', {
+      const response = await axios.post('https://nova-testimonial.onrender.com/SignUp', {
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,

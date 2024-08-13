@@ -14,13 +14,13 @@ const SpaceDetails = () => {
 
   useEffect(() => {
     if (!publicUrl) {
-      navigate('/'); // Redirect to home if no space is selected
+      navigate('/'); 
       return;
     }
 
     const fetchSpaceDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
+        const response = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -28,7 +28,7 @@ const SpaceDetails = () => {
         setSpace(result);
 
         // Fetch feedback details
-        const feedbackResponse = await fetch(`http://localhost:5000/space/${publicUrl}/feedbackDetails`);
+        const feedbackResponse = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}/feedbackDetails`);
         if (!feedbackResponse.ok) {
           throw new Error(`HTTP error! status: ${feedbackResponse.status}`);
         }
