@@ -1,15 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
   return (
     <div>
-        <a href="/login ">
-      <button>
-        navigate to login
-      </button>
-      </a>
+      <Link to="/login">
+        <button>
+          Navigate to login
+        </button>
+      </Link>
     </div>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;
