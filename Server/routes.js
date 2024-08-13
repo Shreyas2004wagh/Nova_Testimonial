@@ -105,7 +105,6 @@ router.post("/addSpace", async (req, res) => {
     });
 
     const savedSpace = await newSpace.save();
-    // const spaceLink = `http://localhost:5173/${publicUrl}`;
     const spaceLink = `https://nova-testimonial-1.onrender.com/${publicUrl}`;
 
     res.status(201).json({
