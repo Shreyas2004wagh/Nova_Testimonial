@@ -96,11 +96,11 @@ const Dashboard = () => {
         <h2>Overview</h2>
         <div className="overview-cards">
           <div className="card video-feedback">
-            <h3>Video Feedback</h3>
+            <h3>Total Video Feedback</h3>
             <p>{videoFeedbackCount}</p>
           </div>
           <div className="card text-feedback">
-            <h3>Text Feedback</h3>
+            <h3>Total Text Feedback</h3>
             <p>{textFeedbackCount}</p>
           </div>
         </div>

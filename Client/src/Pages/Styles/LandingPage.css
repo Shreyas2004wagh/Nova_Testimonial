@@ -1,0 +1,174 @@
+body {
+    scroll-behavior: smooth; 
+}
+
+/* Header */
+.landing-page header {
+    background-color: #111;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landing-page nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landing-page .logo {
+    display: flex;
+    align-items: center;
+}
+
+.landing-page .logo img {
+    width: 40px; /* Adjust the width to fit your design */
+    height: auto;
+    margin-right: 10px; /* Space between the logo and the text */
+}
+
+.landing-page .logo h1 {
+    font-size: 24px;
+    color: #fff;
+    margin: 0;
+}
+
+/* Buttons */
+.landing-page .nav-buttons button {
+    background-color: #5639E0; /* Primary color */
+    border: none;
+    color: #fff;
+    padding: 12px 24px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.landing-page .nav-buttons button:hover {
+    background-color: #452fc1; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 100px 20px;
+    background-color: #000;
+}
+
+.hero-section .hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.hero-section .hero-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeIn 1s 0.5s forwards;
+}
+
+.hero-section .try-free-btn {
+    background-color: #5639E0; /* Primary color */
+    color: #fff;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.hero-section .try-free-btn:hover {
+    background-color: #452fc1; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+}
+
+.hero-section .pricing-link {
+    display: block;
+    margin-top: 20px;
+    color: #8585f6;
+    text-decoration: none;
+}
+
+.hero-section .pricing-link:hover {
+    text-decoration: underline;
+}
+
+/* Trusted Customers Section */
+.trusted-customers-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #111;
+}
+
+.trusted-customers-section .customer-logos img {
+    margin: 0 15px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    transition: transform 0.3s;
+}
+
+.trusted-customers-section .customer-logos img:hover {
+    transform: scale(1.1); /* Zoom effect on hover */
+}
+
+/* Testimonial Section */
+.testimonial-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #000;
+}
+
+.testimonial-section h2 {
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.testimonial-section .testimonial-videos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Allow videos to wrap */
+}
+
+.testimonial-section .testimonial {
+    margin: 0 15px;
+    text-align: left;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.testimonial-section .testimonial video {
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #333;
+}
+
+.testimonial-section .testimonial p {
+    margin-top: 10px;
+}
+
+/* Footer */
+footer {
+    background-color: #111;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

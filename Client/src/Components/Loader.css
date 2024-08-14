@@ -1,0 +1,277 @@
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6); /* Slightly darker for better visibility */
+    z-index: 1000; /* Ensure the loader stays on top */
+}
+
+.typewriter {
+    --primary-color: #007BFF; /* Updated primary color */
+    --secondary-color: #0056b3; /* Updated secondary color */
+    --key-color: #ffffff; /* Updated key color */
+    --paper-color: #f8f9fa; /* Updated paper color */
+    --text-color: #343a40; /* Updated text color */
+    --tool-color: #ffc107; /* Updated tool color */
+    --duration: 6s; /* Increased duration for larger loader */
+    position: relative;
+    animation: bounce var(--duration) linear infinite;
+    width: 200px; /* Increased size */
+    height: 120px; /* Increased size */
+}
+
+.typewriter .slide {
+    width: 160px;
+    height: 40px;
+    border-radius: 10px;
+    margin-left: 30px;
+    transform: translateX(20px);
+    background: linear-gradient(var(--primary-color), var(--secondary-color));
+    animation: slide var(--duration) ease infinite;
+}
+
+.typewriter .slide:before, .typewriter .slide:after,
+.typewriter .slide i:before {
+    content: "";
+    position: absolute;
+    background: var(--tool-color);
+}
+
+.typewriter .slide:before {
+    width: 4px;
+    height: 15px;
+    top: 10px;
+    left: 100%;
+}
+
+.typewriter .slide:after {
+    left: 120px;
+    top: 7px;
+    height: 22px;
+    width: 10px;
+    border-radius: 5px;
+}
+
+.typewriter .slide i {
+    display: block;
+    position: absolute;
+    right: 100%;
+    width: 10px;
+    height: 8px;
+    top: 8px;
+    background: var(--tool-color);
+}
+
+.typewriter .slide i:before {
+    right: 100%;
+    top: -4px;
+    width: 6px;
+    border-radius: 4px;
+    height: 22px;
+}
+
+.typewriter .paper {
+    position: absolute;
+    left: 40px;
+    top: -50px;
+    width: 70px;
+    height: 80px;
+    border-radius: 10px;
+    background: var(--paper-color);
+    transform: translateY(80px);
+    animation: paper var(--duration) linear infinite;
+}
+
+.typewriter .paper:before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 12px;
+    border-radius: 4px;
+    height: 6px;
+    transform: scaleY(0.8);
+    background: var(--text-color);
+    box-shadow: 0 20px 0 var(--text-color), 0 40px 0 var(--text-color), 0 60px 0 var(--text-color);
+}
+
+.typewriter .keyboard {
+    width: 180px;
+    height: 90px;
+    margin-top: -20px;
+    z-index: 1;
+    position: relative;
+}
+
+.typewriter .keyboard:before, .typewriter .keyboard:after {
+    content: "";
+    position: absolute;
+}
+
+.typewriter .keyboard:before {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    transform: perspective(15px) rotateX(5deg);
+    transform-origin: 50% 100%;
+}
+
+.typewriter .keyboard:after {
+    left: 5px;
+    top: 40px;
+    width: 16px;
+    height: 6px;
+    border-radius: 4px;
+    box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    animation: keyboard var(--duration) linear infinite;
+}
+
+.loading-text {
+    color: #ffffff; /* Updated text color */
+    margin-top: 40px;
+    font-size: 2.5em; /* Increased font size */
+    font-family: 'Arial', sans-serif; /* Updated font family */
+    font-weight: bold; /* Bold font weight */
+    animation: fadeInOut 2s linear infinite; /* Animation for text */
+}
+
+@keyframes bounce {
+    85%, 92%, 100% {
+      transform: translateY(0);
+    }
+
+    89% {
+      transform: translateY(-10px); /* Increased bounce height */
+    }
+
+    95% {
+      transform: translateY(5px);
+    }
+}
+
+@keyframes slide {
+    5% {
+      transform: translateX(20px);
+    }
+
+    15%, 30% {
+      transform: translateX(10px);
+    }
+
+    40%, 55% {
+      transform: translateX(0);
+    }
+
+    65%, 70% {
+      transform: translateX(-8px);
+    }
+
+    80%, 89% {
+      transform: translateX(-20px);
+    }
+
+    100% {
+      transform: translateX(20px);
+    }
+}
+
+@keyframes paper {
+    5% {
+      transform: translateY(80px);
+    }
+
+    20%, 30% {
+      transform: translateY(60px);
+    }
+
+    40%, 55% {
+      transform: translateY(40px);
+    }
+
+    65%, 70% {
+      transform: translateY(20px);
+    }
+
+    80%, 85% {
+      transform: translateY(0);
+    }
+
+    92%, 100% {
+      transform: translateY(80px);
+    }
+}
+
+@keyframes keyboard {
+    5%, 12%, 21%, 30%, 39%, 48%, 57%, 66%, 75%, 84% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    9% {
+      box-shadow: 20px 4px 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    18% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 4px 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    27% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 4px 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    36% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 4px 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    45% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    54% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    63% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    72% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    81% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    90% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    99% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+
+    100% {
+      box-shadow: 20px 0 0 var(--key-color), 40px 0 0 var(--key-color), 60px 0 0 var(--key-color), 80px 0 0 var(--key-color), 100px 0 0 var(--key-color), 120px 0 0 var(--key-color), 30px 15px 0 var(--key-color), 50px 15px 0 var(--key-color), 70px 15px 0 var(--key-color), 90px 15px 0 var(--key-color), 110px 15px 0 var(--key-color), 130px 15px 0 var(--key-color);
+    }
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

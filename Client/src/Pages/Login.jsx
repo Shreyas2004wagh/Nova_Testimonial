@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import './Styles/Login.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../Components/Loader'; 
+import './Styles/Login.css';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -9,6 +10,7 @@ const Login = () => {
     password: '',
   });
 
+  const [loading, setLoading] = useState(false); // State to manage loader visibility
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loader
 
     try {
       const response = await axios.post('https://nova-testimonial.onrender.com/login', {
@@ -29,13 +32,10 @@ const Login = () => {
       setSuccess(response.data.message);
       setError('');
 
-      // Store the email in session storage
       localStorage.setItem('userEmailLogin', form.email);
-
       alert('Login successful');
-      localStorage.setItem('userId', response.data._id); 
-      
-      // Navigate to /dashboard
+      localStorage.setItem('userId', response.data._id);
+
       navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
@@ -44,11 +44,14 @@ const Login = () => {
         setError('An error occurred. Please try again later.');
       }
       setSuccess('');
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
   return (
     <div className="login-container">
+      {loading && <Loader />} 
       <div className="login-sidebar">
         <h1>Nova</h1>
         <p>Welcome to Nova</p>
