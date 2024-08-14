@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../Components/Loader'; 
 import './Styles/SignUp.css';
 
 const SignUp = () => {
@@ -11,6 +12,7 @@ const SignUp = () => {
     phoneNumber: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false); // State to manage loader visibility
 
   const navigate = useNavigate();
 
@@ -20,21 +22,21 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loader
 
     try {
       const response = await axios.post('https://nova-testimonial.onrender.com/SignUp', {
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
-        phoneNum: form.phoneNumber, // Ensure the key matches the backend schema
+        phoneNum: form.phoneNumber,
         password: form.password,
       });
 
       if (response.status === 201) {
         alert("Sign up successful!");
-         // Storing email in local storage
-         localStorage.setItem('userEmailSignup', form.email);
-         localStorage.setItem('userId', response.data._id);
+        localStorage.setItem('userEmailSignup', form.email);
+        localStorage.setItem('userId', response.data._id);
         setForm({
           firstName: '',
           lastName: '',
@@ -42,7 +44,7 @@ const SignUp = () => {
           phoneNumber: '',
           password: '',
         });
-        navigate('/dashboard'); // Navigate to /dashboard
+        navigate('/dashboard');
       } else {
         alert("Sign up failed!");
       }
@@ -54,11 +56,14 @@ const SignUp = () => {
       } else {
         alert("An error occurred. Please try again later.");
       }
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
 
   return (
     <div className="signup-container">
+      {loading && <Loader />} 
       <div className="signup-sidebar">
         <h1>Nova</h1>
         <p>Start taking customer feedback — easily.</p>
