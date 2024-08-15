@@ -106,7 +106,7 @@ router.post("/addSpace", async (req, res) => {
     });
 
     const savedSpace = await newSpace.save();
-    const spaceLink = `https://client-blush-five.vercel.app/${publicUrl}`;
+    const spaceLink = `http://localhost:5173/${publicUrl}`;
 
     console.log('Generated link:', spaceLink);
 
