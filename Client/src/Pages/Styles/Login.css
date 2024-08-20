@@ -93,3 +93,79 @@
     margin-top: 2rem;
     font-size: 1rem;
   }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px); 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+}
+
+/* Modal styling */
+.modal-content {
+  background: var(--background-color);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 8px; 
+  text-align: center;
+  position: relative;
+  width: 300px; 
+  height: 300px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(0.9);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-content.success {
+  border: 2px solid green;
+  color: green;
+}
+
+.modal-content.error {
+  border: 2px solid red;
+  color: red;
+}
+
+.modal-overlay.visible .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Close button styling */
+.modal-close-button {
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  transition: background 0.3s ease;
+  font-family: 'Arial', sans-serif; 
+}
+
+.modal-close-button:hover {
+  background: #5e35b1;
+}
+
+.modal-content p {
+  margin: 0;
+  font-family:'Times New Roman', Times, serif; 
+  font-size: 2rem; 
+}
