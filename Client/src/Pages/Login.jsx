@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader'; 
@@ -10,9 +10,12 @@ const Login = () => {
     password: '',
   });
 
-  const [loading, setLoading] = useState(false); // State to manage loader visibility
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(''); // 'error' or 'success'
+  const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,7 +24,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show loader
+    setLoading(true);
 
     try {
       const response = await axios.post('https://nova-testimonial.onrender.com/login', {
@@ -31,27 +34,58 @@ const Login = () => {
 
       setSuccess(response.data.message);
       setError('');
+      setModalMessage(response.data.message);
+      setModalType('success');
+      setModalVisible(true);
 
       localStorage.setItem('userEmailLogin', form.email);
-      alert('Login successful');
       localStorage.setItem('userId', response.data._id);
 
-      navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
         setError(error.response.data.message);
+        setModalMessage(error.response.data.message);
+        setModalType('error');
       } else {
         setError('An error occurred. Please try again later.');
+        setModalMessage('An error occurred. Please try again later.');
+        setModalType('error');
       }
       setSuccess('');
+      setModalVisible(true);
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (modalType === 'success' && modalVisible) {
+      const timer = setTimeout(() => {
+        handleCloseModal();
+      }, 200000); // 
+
+      return () => clearTimeout(timer);
+    }
+  }, [modalType, modalVisible]);
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    if (modalType === 'success') {
+      navigate('/dashboard');
     }
   };
 
   return (
     <div className="login-container">
-      {loading && <Loader />} 
+      {loading && <Loader />}
+      {modalVisible && (
+        <div className={`modal-overlay ${modalVisible ? 'visible' : ''}`}>
+          <div className={`modal-content ${modalType}`}>
+            <p>{modalMessage}</p>
+            <button onClick={handleCloseModal} className="modal-close-button">Close</button>
+          </div>
+        </div>
+      )}
       <div className="login-sidebar">
         <h1>Nova</h1>
         <p>Welcome to Nova</p>
@@ -61,8 +95,6 @@ const Login = () => {
       <div className="login-form">
         <h2>Login</h2>
         <p>Provide your account information to continue.</p>
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email Address</label>
