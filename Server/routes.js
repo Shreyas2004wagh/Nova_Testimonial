@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
+const multer = require("multer");
+const path = require("path");
 
 // Sign-up Route
 router.post("/SignUp", async (req, res) => {
@@ -166,39 +168,71 @@ router.get("/space/:publicUrl", async (req, res) => {
 });
 
 // Submit Feedback Route
-router.post("/space/:publicUrl/feedback", async (req, res) => {
-  try {
-    const { publicUrl } = req.params;
-    const { name, email, responses, feedbackType } = req.body;
-
-    const space = await Space.findOne({ publicUrl });
-
-    if (!space) {
-      return res.status(404).json({ message: "Space not found" });
-    }
-
-    const feedback = {
-      name,
-      email,
-      responses: space.questions.map((question, index) => ({
-        question,
-        answer: responses[index] || "",
-      })),
-      feedbackType: feedbackType || "text", // Default to 'text' if not specified
-    };
-
-    space.feedback.push(feedback);
-    await space.save();
-
-    res
-      .status(201)
-      .json({ message: "Feedback submitted successfully", feedback });
-  } catch (error) {
-    console.error("Error submitting feedback:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Specify the destination directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`); // Use the current timestamp and original filename
+  },
 });
 
+// Initialize multer
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error("Only image files are allowed!"));
+  },
+});
+
+// Modify the feedback route to include image upload
+router.post(
+  "/space/:publicUrl/feedback",
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const { publicUrl } = req.params;
+      const { name, email, responses, feedbackType } = req.body;
+
+      const space = await Space.findOne({ publicUrl });
+
+      if (!space) {
+        return res.status(404).json({ message: "Space not found" });
+      }
+
+      const feedback = {
+        name,
+        email,
+        responses: space.questions.map((question, index) => ({
+          question,
+          answer: responses[index] || "",
+        })),
+        feedbackType: feedbackType || "text",
+        image: req.file ? req.file.path : null, // Store image path if provided
+      };
+
+      space.feedback.push(feedback);
+      await space.save();
+
+      res
+        .status(201)
+        .json({ message: "Feedback submitted successfully", feedback });
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
 
 router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
   try {
