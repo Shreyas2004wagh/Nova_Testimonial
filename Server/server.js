@@ -5,11 +5,14 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
 const dotenv = require("dotenv");
+const upload=require('./uploads.js');
 
 dotenv.config();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
 
 app.get("/", (req, res) => {
   try {
