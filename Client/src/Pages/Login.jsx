@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader'; 
+import Modal from '../Components/Modal'; 
 import './Styles/Login.css';
 
 const Login = () => {
@@ -13,6 +14,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // State to manage loader visibility
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -31,27 +33,27 @@ const Login = () => {
 
       setSuccess(response.data.message);
       setError('');
-
       localStorage.setItem('userEmailLogin', form.email);
-      alert('Login successful');
       localStorage.setItem('userId', response.data._id);
-
-      navigate('/dashboard');
+      setShowModal(true);
     } catch (error) {
-      if (error.response && error.response.data) {
-        setError(error.response.data.message);
-      } else {
-        setError('An error occurred. Please try again later.');
-      }
+      setError(error.response?.data?.message || 'An error occurred. Please try again later.');
       setSuccess('');
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
     }
   };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/dashboard');
+  };
+
 
   return (
     <div className="login-container">
       {loading && <Loader />} 
+      {showModal && <Modal message="Login successful!" onClose={handleCloseModal} />}
       <div className="login-sidebar">
         <h1>Nova</h1>
         <p>Welcome to Nova</p>

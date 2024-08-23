@@ -13,6 +13,12 @@
     background-color: var(--background-color);
     color: var(--text-color);
   }
+
+
+  body.modal-open {
+    overflow: hidden;
+    filter: blur(4px);
+  }
   
   .signup-container {
     display: flex;

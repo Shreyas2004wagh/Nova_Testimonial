@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader'; 
+import Modal from '../Components/Modal'; 
 import './Styles/SignUp.css';
 
 const SignUp = () => {
@@ -13,7 +14,7 @@ const SignUp = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false); // State to manage loader visibility
-
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -61,9 +62,16 @@ const SignUp = () => {
     }
   };
 
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/login');
+  };
+
   return (
     <div className="signup-container">
       {loading && <Loader />} 
+      {showModal && <Modal message="Sign up successful! Please log in." onClose={handleCloseModal} />}
       <div className="signup-sidebar">
         <h1>Nova</h1>
         <p>Start taking customer feedback — easily.</p>
