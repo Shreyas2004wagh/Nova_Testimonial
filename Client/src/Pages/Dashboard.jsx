@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [textFeedbackCount, setTextFeedbackCount] = useState(0);
   const [videoFeedbackCount, setVideoFeedbackCount] = useState(0);
+  const [cookieConsent, setCookieConsent] = useState(null); // Track cookie consent state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,9 +24,9 @@ const Dashboard = () => {
         if (!userId) {
           throw new Error('User ID not found in local storage');
         }
-  
+
         const response = await fetch(`https://nova-testimonial.onrender.com/getSpacesByUserId/${userId}`);
-  
+        
         if (response.status === 404) {
           setSpaces([]);  // No spaces found, so set spaces to an empty array
         } else if (!response.ok) {
@@ -33,7 +34,13 @@ const Dashboard = () => {
         } else {
           const result = await response.json();
           setSpaces(result);
-  
+
+          if (cookieConsent === 'accepted') {
+            // Extract space names from the result and store them in cookies if consent is given
+            const spaceNames = result.map(space => space.spacename);
+            document.cookie = `spaceNames=${JSON.stringify(spaceNames)}; path=/; max-age=${24 * 60 * 60}`;
+          }
+
           // Fetch feedback counts for the first space (if any spaces exist)
           if (result.length > 0) {
             const feedbackCountsResponse = await fetch(`https://nova-testimonial.onrender.com/space/${result[0].publicUrl}/feedbackCounts`);
@@ -45,17 +52,16 @@ const Dashboard = () => {
             setVideoFeedbackCount(feedbackCounts.videoFeedbackCount);
           }
         }
-  
+
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchSpaces();
-  }, []);
-  
+  }, [cookieConsent]); // Dependency array includes cookieConsent
 
   const handleSpaceClick = (space) => {
     sessionStorage.setItem('selectedSpace', JSON.stringify(space));
@@ -65,6 +71,24 @@ const Dashboard = () => {
   const handleProfileClick = () => {
     navigate('/profile');
   };
+
+  const handleAcceptCookies = () => {
+    setCookieConsent('accepted');
+    localStorage.setItem('cookieConsent', 'accepted');
+  };
+
+  const handleRejectCookies = () => {
+    setCookieConsent('rejected');
+    localStorage.setItem('cookieConsent', 'rejected');
+  };
+
+  useEffect(() => {
+    // Check for existing cookie consent in local storage
+    const existingConsent = localStorage.getItem('cookieConsent');
+    if (existingConsent) {
+      setCookieConsent(existingConsent);
+    }
+  }, []);
 
   return (
     <div className="dashboard">
@@ -118,7 +142,7 @@ const Dashboard = () => {
               <p>Error: {error}</p>
             ) : spaces.length === 0 ? (
               <>
-              <img src={treeImg} alt="No space available" className="no-space-image"/>;
+              <img src={treeImg} alt="No space available" className="no-space-image"/>
               <p>No space yet, add a new one?</p>
               </>
             ) : (
@@ -137,6 +161,14 @@ const Dashboard = () => {
           </div>
         </div>
       </section>
+      {/* Cookie Consent Bar */}
+      {cookieConsent === null && (
+        <div className="cookie-consent">
+          <p>This website uses cookies to improve your experience. Do you accept the use of cookies?</p>
+          <button onClick={handleAcceptCookies}>Accept</button>
+          <button onClick={handleRejectCookies}>Reject</button>
+        </div>
+      )}
     </div>
   );
 };
