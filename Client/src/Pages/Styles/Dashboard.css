@@ -223,6 +223,55 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+.cookie-consent {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  padding: 15px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  z-index: 1000;
+  border-top: 2px solid var(--card-border-color);
+  font-family: var(--font-family);
+}
+
+.cookie-consent p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.cookie-consent button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.cookie-consent button:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.05);
+}
+
+.cookie-consent button:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .cookie-consent button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 768px) {
   .hero-section h1 {
     font-size: 2rem;
