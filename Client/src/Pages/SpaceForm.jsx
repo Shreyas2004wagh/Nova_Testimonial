@@ -194,15 +194,18 @@ const SpaceForm = () => {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Space Created Successfully!</h2>
-            <p>Your space link has been generated:</p>
-            <p className="generated-link">{generatedLink}</p>
-            <button onClick={handleCopyLink} className="copy-button">Copy Link to Clipboard</button>
-          </div>
-        </div>
-      )}
+  <div className="modal-overlay">
+    <div className="modal">
+      <h2>Space Created Successfully!</h2>
+      <p>Your space link has been generated:</p>
+      <p className="generated-link">{generatedLink}</p>
+      <button onClick={handleCopyLink} className="copy-button">Copy Link to Clipboard</button>
+      {[...Array(9)].map((_, index) => (
+        <div key={index} className="ribbon"></div>
+      ))}
+    </div>
+  </div>
+)}
 
       {showCopiedModal && (
         <div className="modal-overlay">
