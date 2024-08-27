@@ -5,7 +5,7 @@ const feedbackSchema = new mongoose.Schema({
   email: { type: String, required: true },
   responses: [{ question: String, answer: String }],
   feedbackType: { type: String, enum: ["text", "video"], required: true },
-  image: { type: String }, // New field to store image path
+  image: { type: String },
   submittedAt: { type: Date, default: Date.now },
 });
 

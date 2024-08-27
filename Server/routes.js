@@ -4,8 +4,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
-const multer = require("multer");
-const path = require("path");
+const upload = require("./utils/multer");
+const cloudinary = require("./utils/Cloudinary");
+
 
 // Sign-up Route
 router.post("/SignUp", async (req, res) => {
@@ -135,20 +136,6 @@ router.get("/getSpaces", async (req, res) => {
   }
 });
 
-// Get Spaces by User ID Route
-router.get("/getSpacesByUserId/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const spaces = await Space.find({ user_Id: userId });
-    if (!spaces.length) {
-      return res.status(404).json({ message: "No spaces found for this user" });
-    }
-    res.status(200).json(spaces);
-  } catch (error) {
-    console.error("Error fetching spaces:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 // Get Space by Public URL Route
 router.get("/space/:publicUrl", async (req, res) => {
@@ -167,72 +154,6 @@ router.get("/space/:publicUrl", async (req, res) => {
   }
 });
 
-// Submit Feedback Route
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Specify the destination directory
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`); // Use the current timestamp and original filename
-  },
-});
-
-// Initialize multer
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-  fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png|gif/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    }
-    cb(new Error("Only image files are allowed!"));
-  },
-});
-
-// Modify the feedback route to include image upload
-router.post(
-  "/space/:publicUrl/feedback",
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      const { publicUrl } = req.params;
-      const { name, email, responses, feedbackType } = req.body;
-
-      const space = await Space.findOne({ publicUrl });
-
-      if (!space) {
-        return res.status(404).json({ message: "Space not found" });
-      }
-
-      const feedback = {
-        name,
-        email,
-        responses: space.questions.map((question, index) => ({
-          question,
-          answer: responses[index] || "",
-        })),
-        feedbackType: feedbackType || "text",
-        image: req.file ? req.file.path : null, // Store image path if provided
-      };
-
-      space.feedback.push(feedback);
-      await space.save();
-
-      res
-        .status(201)
-        .json({ message: "Feedback submitted successfully", feedback });
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  }
-);
 
 router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
   try {
@@ -385,6 +306,24 @@ router.get("/getSpacesByUserId/:userId", async (req, res) => {
     console.error("Error fetching spaces:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+
+router.post("/upload", upload.single("image"), function (req, res) {
+  cloudinary.uploader.upload(req.file.path, function (err, result) {
+    if (err) {
+      console.log("Image cannot be uploaed:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Error uploading image",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Uploaded!",
+      data: result,
+    });
+  });
 });
 
 module.exports = router;
