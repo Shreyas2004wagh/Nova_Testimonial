@@ -14,7 +14,8 @@ const SignUp = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false); // State to manage loader visibility
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+  const [modalMessage, setModalMessage] = useState(""); // Modal message state
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -38,7 +39,8 @@ const SignUp = () => {
       );
 
       if (response.status === 201) {
-        alert("Sign up successful!");
+        setModalMessage("Sign up successful!");
+        setShowModal(true); // Show success modal
         localStorage.setItem("userEmailSignup", form.email);
         localStorage.setItem("userId", response.data._id);
         setForm({
@@ -48,44 +50,50 @@ const SignUp = () => {
           phoneNumber: "",
           password: "",
         });
-        navigate("/dashboard");
+        setTimeout(() => {
+          setShowModal(false);
+          navigate("/dashboard"); // Navigate to dashboard after 2 seconds
+        }, 2000); // Modal auto-closes after 2 seconds
       } else {
-        alert("Sign up failed!");
+        setModalMessage("Sign up failed!");
+        setShowModal(true); // Show failure modal
       }
     } catch (error) {
       console.error("Error during sign up:", error);
       if (error.response) {
         console.error("Server responded with:", error.response.data);
-        alert(`Sign up failed: ${error.response.data.message}`);
+        setModalMessage(`Sign up failed: ${error.response.data.message}`);
       } else {
-        alert("An error occurred. Please try again later.");
+        setModalMessage("An error occurred. Please try again later.");
       }
+      setShowModal(true); // Show error modal
     } finally {
       setLoading(false); // Hide loader
     }
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
-    navigate("/login");
+    setShowModal(false); // Close modal
   };
 
   return (
     <div className="signup-container">
-      {loading && <Loader />}
+      {loading && <Loader />} {/* Loader */}
       {showModal && (
-        <Modal
-          message="Sign up successful! Please log in."
-          onClose={handleCloseModal}
-        />
-      )}
-     <div className="signup-sidebar">
-  <h1>Welcome to Nova</h1>
-  <p>Nova helps you gather and manage customer feedback effortlessly.</p>
-  <p>Create your account to start collecting valuable insights that improve your business.</p>
-  <p>Already have an account? <a href="/login">Log in here</a></p>
-</div>
+        <Modal message={modalMessage} onClose={handleCloseModal} />
+      )} {/* Modal */}
 
+      <div className="signup-sidebar">
+        <h1>Welcome to Nova</h1>
+        <p>Nova helps you gather and manage customer feedback effortlessly.</p>
+        <p>
+          Create your account to start collecting valuable insights that improve
+          your business.
+        </p>
+        <p>
+          Already have an account? <a href="/login">Log in here</a>
+        </p>
+      </div>
 
       <div className="signup-form">
         <h2>Account Information</h2>

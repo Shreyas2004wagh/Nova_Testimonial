@@ -2,14 +2,16 @@
   --primary-color: #6200ea;
   --background-color: #121212;
   --text-color: #ffffff;
-  --input-background: #333333;
-  --input-border: #444444;
+  --input-background: #1d1d1d;
+  --input-border: #555555;
   --button-color: #8d3eed;
+  --accent-color: #ffdd57;
+  --secondary-text-color: #bbbbbb;
 }
 
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
 }
@@ -21,42 +23,75 @@ body.modal-open {
 
 .login-container {
   display: flex;
-  height: 100vh;
+  height: auto;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--background-color);
 }
 
 .login-sidebar {
-  background: var(--primary-color);
+  background-color: var(--primary-color);
   color: var(--text-color);
-  padding: 2rem;
-  width: 30%;
+  padding: 2rem 2.5rem;
+  width: 35%;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  border-radius: 0px;
+  height: auto;
+  min-height: 100vh;
 }
 
 .login-sidebar h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .login-sidebar p {
-  margin: 1rem 0;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+  color: var(--secondary-text-color);
+}
+
+.login-sidebar a {
+  font-size: 1rem;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-sidebar a:hover {
+  text-decoration: underline;
 }
 
 .login-form {
+  background-color: #1e1e1e;
   padding: 3rem;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  border-radius: 0px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  height: auto;
+  min-height: 100vh;
 }
 
 .login-form h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 0.5rem;
 }
 
 .login-form p {
+  font-size: 1.2rem;
   margin-bottom: 2rem;
+  color: var(--secondary-text-color);
 }
 
 .form-group {
@@ -66,15 +101,25 @@ body.modal-open {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-color);
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.85rem;
   border: 1px solid var(--input-border);
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: var(--input-background);
   color: var(--text-color);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--accent-color);
+  outline: none;
 }
 
 .forgot-password {
@@ -84,17 +129,39 @@ body.modal-open {
 }
 
 .forgot-password a {
-  color: var(--button-color);
+  color: var(--accent-color);
   text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: bold;
 }
 
 .submit-button {
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 2.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: var(--button-color);
   color: var(--text-color);
   cursor: pointer;
   margin-top: 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #732dfc;
+}
+
+.error-message {
+  color: #ff4d4d;
   font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.success-message {
+  color: #32cd32;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }

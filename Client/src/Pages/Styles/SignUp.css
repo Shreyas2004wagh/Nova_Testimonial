@@ -18,41 +18,40 @@ body {
 
 .signup-container {
   display: flex;
-  height: auto;
-  align-items: stretch;  /* Make the container stretch to fill the full height */
+  height: 100vh;
+  align-items: stretch;
   justify-content: center;
-  background-color: var(--background-color); /* Removed purple gradient */
+  background-color: var(--background-color);
 }
 
 .signup-sidebar {
   background-color: var(--primary-color);
   color: var(--text-color);
-  padding: 2rem 2.5rem;
-  width: 35%;
+  padding: 1.5rem;
+  width: 30%;
   text-align: left;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-radius: 0px;  /* Remove border-radius to spread sidebar edge-to-edge */
-  height: auto;
-  min-height: 100vh;   /* Ensure it takes full vertical space */
+  border-radius: 0;
+  height: 100vh;
 }
 
 .signup-sidebar h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .signup-sidebar p {
-  font-size: 1.2rem;
-  margin-bottom: 1.2rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
   color: var(--secondary-text-color);
 }
 
 .signup-sidebar a {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--accent-color);
   text-decoration: none;
   font-weight: bold;
@@ -64,52 +63,50 @@ body {
 
 .signup-form {
   background-color: #1e1e1e;
-  padding: 3rem;
+  padding: 1.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-radius: 0px;  /* Remove border-radius for full alignment */
+  border-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  height: auto;
-  min-height: 100vh;  /* Ensure it fills the full height on the right */
+  height: 100vh;
 }
 
 .signup-form h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 0.01rem;
   color: var(--accent-color);
   border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 0.5rem;
+  padding-top: 5rem;
 }
 
 .signup-form p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  margin-bottom: 3rem;
   color: var(--secondary-text-color);
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
   font-weight: bold;
   color: var(--text-color);
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.85rem;
+  padding: 0.7rem;
   border: 1px solid var(--input-border);
   border-radius: 6px;
   background-color: var(--input-background);
   color: var(--text-color);
   font-size: 1rem;
-  transition: all 0.3s ease;
 }
 
 .form-group input:focus {
@@ -118,13 +115,13 @@ body {
 }
 
 .submit-button {
-  padding: 0.75rem 2.5rem;
+  padding: 0.7rem 2rem;
   border: none;
   border-radius: 6px;
   background-color: var(--button-color);
   color: var(--text-color);
   cursor: pointer;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-size: 1.1rem;
   font-weight: bold;
   transition: background-color 0.3s ease;
@@ -132,4 +129,18 @@ body {
 
 .submit-button:hover {
   background-color: #732dfc;
+}
+
+.success-message {
+  color: #32cd32;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #ff4d4d;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }
