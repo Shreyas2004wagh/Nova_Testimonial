@@ -12,6 +12,7 @@ const SpaceForm = () => {
     starRatings: false,
   });
 
+  const [image, setImage] = useState(null); // New state for image
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [generatedLink, setGeneratedLink] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +28,10 @@ const SpaceForm = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); // Set the selected file
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -36,7 +41,7 @@ const SpaceForm = () => {
       setLoading(true); 
       return;
     }
-  
+
     const formattedData = {
       ...formData,
       questions: formData.questions.split(',').map((q) => q.trim()),
@@ -44,12 +49,26 @@ const SpaceForm = () => {
     };
   
     try {
-      const response = await fetch('https://nova-testimonial.onrender.com/addSpace', {
+      setLoading(true); // Show loading spinner
+
+      // Create a FormData object to handle both image and form data
+      const formDataObj = new FormData();
+      formDataObj.append('spacename', formattedData.spacename);
+      formDataObj.append('publicUrl', formattedData.publicUrl);
+      formDataObj.append('headerTitle', formattedData.headerTitle);
+      formDataObj.append('customMessage', formattedData.customMessage);
+      formDataObj.append('questions', JSON.stringify(formattedData.questions));
+      formDataObj.append('starRatings', formattedData.starRatings);
+      formDataObj.append('user_Id', formattedData.user_Id);
+      
+      if (image) {
+        formDataObj.append('image', image); // Append the image file
+      }
+
+      // Post space data and image to server
+      const response = await fetch('http://localhost:5000/addSpace', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedData),
+        body: formDataObj,
       });
   
       if (!response.ok) {
@@ -69,7 +88,7 @@ const SpaceForm = () => {
         sessionStorage.setItem('generatedLink', link);
   
         // Make a request to add the link to the Space document in the database
-        await fetch(`https://nova-testimonial.onrender.com/space/${formData.publicUrl}/addLink`, {
+        await fetch(`http://localhost:5000/space/${formData.publicUrl}/addLink`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -92,10 +111,10 @@ const SpaceForm = () => {
       console.error('Error:', error);
       alert('Failed to create space. Check console for details.');
     } finally {
-      setLoading(false); 
+      setLoading(false); // Hide loading spinner
     }
   };
-  
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(generatedLink).then(() => {
       setShowModal(false);
@@ -181,8 +200,17 @@ const SpaceForm = () => {
             </label>
           </div>
 
-          <button type="submit" className="submit-button">
-            Create Space
+          <div className="form-group">
+            <label>Upload Image</label>
+            <input
+              type="file"
+              name="image"
+              onChange={handleImageChange}
+            />
+          </div>
+
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? 'Creating...' : 'Create Space'}
           </button>
         </form>
         {isSubmitted && (
@@ -194,18 +222,18 @@ const SpaceForm = () => {
       </div>
 
       {showModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <h2>Space Created Successfully!</h2>
-      <p>Your space link has been generated:</p>
-      <p className="generated-link">{generatedLink}</p>
-      <button onClick={handleCopyLink} className="copy-button">Copy Link to Clipboard</button>
-      {[...Array(9)].map((_, index) => (
-        <div key={index} className="ribbon"></div>
-      ))}
-    </div>
-  </div>
-)}
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Space Created Successfully!</h2>
+            <p>Your space link has been generated:</p>
+            <p className="generated-link">{generatedLink}</p>
+            <button onClick={handleCopyLink} className="copy-button">Copy Link to Clipboard</button>
+            {[...Array(9)].map((_, index) => (
+              <div key={index} className="ribbon"></div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showCopiedModal && (
         <div className="modal-overlay">

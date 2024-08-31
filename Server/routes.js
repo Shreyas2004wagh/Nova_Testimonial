@@ -76,8 +76,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Add Space Route
-// Add Space Route
-router.post("/addSpace", async (req, res) => {
+router.post("/addSpace", upload.single("image"), async (req, res) => {
   try {
     const {
       spacename,
@@ -98,6 +97,13 @@ router.post("/addSpace", async (req, res) => {
       return res.status(400).json({ message: "Public URL already exists" });
     }
 
+    // Upload image to Cloudinary
+    let imgUrl = '';
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      imgUrl = result.secure_url;
+    }
+
     const newSpace = new Space({
       spacename,
       publicUrl,
@@ -106,6 +112,7 @@ router.post("/addSpace", async (req, res) => {
       questions,
       starRatings,
       user_Id,
+      img: imgUrl, 
     });
 
     const savedSpace = await newSpace.save();
@@ -123,6 +130,7 @@ router.post("/addSpace", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 // Get Spaces Route

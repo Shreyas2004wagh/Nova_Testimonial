@@ -14,7 +14,7 @@ const SpacePage = () => {
   useEffect(() => {
     const fetchSpaceData = async () => {
       try {
-        const response = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}`);
+        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
         if (!response.ok) {
           throw new Error('Space not found');
         }
@@ -45,7 +45,7 @@ const SpacePage = () => {
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}/feedback`, {
+    const response = await fetch(`http://localhost:5000/space/${publicUrl}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

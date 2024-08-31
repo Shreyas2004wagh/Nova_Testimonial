@@ -26,6 +26,7 @@ const spaceSchema = new mongoose.Schema(
     },
     feedback: [feedbackSchema],
     links: [{ type: String }],
+    img: { type: String },
   },
   { versionKey: false }
 );
