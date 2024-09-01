@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
-const cloudinary = require("./utils/Cloudinary");
+const cloudinary = require("./utils/cloudinary");
 
 
 // Sign-up Route
