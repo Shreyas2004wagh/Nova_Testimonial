@@ -9,6 +9,8 @@ const SpacePage = () => {
     name: '',
     email: '',
     responses: [],
+    feedbackType: 'text', // Added to handle feedback type
+    video: null, // Added to handle video file
   });
 
   useEffect(() => {
@@ -42,15 +44,37 @@ const SpacePage = () => {
     }));
   };
 
+  const handleFeedbackTypeChange = (e) => {
+    setFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      feedbackType: e.target.value,
+      video: null, // Reset video when feedback type changes
+    }));
+  };
+
+  const handleVideoChange = (e) => {
+    setFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      video: e.target.files[0], // Store the video file
+    }));
+  };
+
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append('name', feedback.name);
+    formData.append('email', feedback.email);
+    formData.append('feedbackType', feedback.feedbackType);
+    formData.append('responses', JSON.stringify(feedback.responses));
+
+    if (feedback.video) {
+      formData.append('video', feedback.video);
+    }
+
     const response = await fetch(`http://localhost:5000/space/${publicUrl}/feedback`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(feedback),
+      body: formData,
     });
 
     if (response.ok) {
@@ -59,6 +83,8 @@ const SpacePage = () => {
         name: '',
         email: '',
         responses: Array(spaceData.questions.length).fill(''),
+        feedbackType: 'text',
+        video: null,
       });
     } else {
       alert('Failed to submit feedback.');
@@ -94,12 +120,36 @@ const SpacePage = () => {
           />
         </div>
 
+        <div>
+          <label>Feedback Type</label>
+          <select
+            value={feedback.feedbackType}
+            onChange={handleFeedbackTypeChange}
+            required
+          >
+            <option value="text">Text</option>
+            <option value="video">Video</option>
+          </select>
+        </div>
+
+        {feedback.feedbackType === 'video' && (
+          <div>
+            <label>Upload Video</label>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleVideoChange}
+            />
+          </div>
+        )}
+
         {spaceData.questions.map((question, index) => (
           <div key={index}>
             <label>{question}</label>
             <textarea
               value={feedback.responses[index]}
               onChange={(e) => handleFeedbackChange(index, e.target.value)}
+              disabled={feedback.feedbackType === 'video'}
             />
           </div>
         ))}
