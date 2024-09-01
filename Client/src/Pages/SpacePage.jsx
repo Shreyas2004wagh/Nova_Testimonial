@@ -14,7 +14,7 @@ const SpacePage = () => {
   useEffect(() => {
     const fetchSpaceData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
+        const response = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}`);
         if (!response.ok) {
           throw new Error('Space not found');
         }
