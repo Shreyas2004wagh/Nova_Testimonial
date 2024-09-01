@@ -162,6 +162,38 @@ router.get("/space/:publicUrl", async (req, res) => {
   }
 });
 
+router.post("/space/:publicUrl/feedback", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const { name, email, responses, feedbackType } = req.body;
+
+    const space = await Space.findOne({ publicUrl });
+
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
+    }
+
+    const feedback = {
+      name,
+      email,
+      responses: space.questions.map((question, index) => ({
+        question,
+        answer: responses[index] || "",
+      })),
+      feedbackType: feedbackType || "text", 
+    };
+
+    space.feedback.push(feedback);
+    await space.save();
+
+    res
+      .status(201)
+      .json({ message: "Feedback submitted successfully", feedback });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
   try {
