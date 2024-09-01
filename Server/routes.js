@@ -162,38 +162,54 @@ router.get("/space/:publicUrl", async (req, res) => {
   }
 });
 
-router.post("/space/:publicUrl/feedback", async (req, res) => {
-  try {
-    const { publicUrl } = req.params;
-    const { name, email, responses, feedbackType } = req.body;
+router.post(
+  "/space/:publicUrl/feedback",
+  upload.single("video"),
+  async (req, res) => {
+    try {
+      const { publicUrl } = req.params;
+      const { name, email, responses, feedbackType } = req.body;
+      const videoFile = req.file;
 
-    const space = await Space.findOne({ publicUrl });
+      const space = await Space.findOne({ publicUrl });
 
-    if (!space) {
-      return res.status(404).json({ message: "Space not found" });
+      if (!space) {
+        return res.status(404).json({ message: "Space not found" });
+      }
+
+      let videoUrl = "";
+      if (feedbackType === "video" && videoFile) {
+        // Upload video to Cloudinary
+        const result = await cloudinary.uploader.upload(videoFile.path, {
+          resource_type: "video",
+        });
+        videoUrl = result.secure_url;
+      }
+
+      const feedback = {
+        name,
+        email,
+        responses: space.questions.map((question, index) => ({
+          question,
+          answer: responses[index] || "",
+        })),
+        feedbackType: feedbackType || "text",
+        video: feedbackType === "video" ? videoUrl : undefined, // Add video URL only if feedback type is "video"
+      };
+
+      space.feedback.push(feedback);
+      await space.save();
+
+      res
+        .status(201)
+        .json({ message: "Feedback submitted successfully", feedback });
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-    const feedback = {
-      name,
-      email,
-      responses: space.questions.map((question, index) => ({
-        question,
-        answer: responses[index] || "",
-      })),
-      feedbackType: feedbackType || "text", 
-    };
-
-    space.feedback.push(feedback);
-    await space.save();
-
-    res
-      .status(201)
-      .json({ message: "Feedback submitted successfully", feedback });
-  } catch (error) {
-    console.error("Error submitting feedback:", error);
-    res.status(500).json({ message: "Internal server error" });
   }
-});
+);
+
 
 router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
   try {
@@ -364,6 +380,28 @@ router.post("/upload", upload.single("image"), function (req, res) {
       data: result,
     });
   });
+});
+
+router.post("/uploadVideo", upload.single("video"), function (req, res) {
+  cloudinary.uploader.upload(
+    req.file.path,
+    { resource_type: "video" },
+    function (err, result) {
+      if (err) {
+        console.log("Video cannot be uploaded:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading video",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Uploaded!",
+        data: result,
+      });
+    }
+  );
 });
 
 module.exports = router;
