@@ -2,6 +2,11 @@ import React from 'react';
 import './Styles/LandingPage.css';
 import Designer from "../Images/Designer.png";
 import { useNavigate } from 'react-router-dom';
+import GoOn from '../Images/GoOnLogo.png';
+import BingeLearn from '../Images/BingeLogo.png';
+import GigX from '../Images/GigX.png';
+import AnonymX from '../Images/AnonymXLogo.jpeg';
+
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -44,10 +49,10 @@ const LandingPage = () => {
       <section className="trusted-customers-section">
         <h2 className="fade-in">Trusted by</h2>
         <div className="customer-logos">
-          <img src="logo1.png" alt="Company 1" />
-          <img src="logo2.png" alt="Company 2" />
-          <img src="logo3.png" alt="Company 3" />
-          <img src="logo4.png" alt="Company 4" />
+          <img src={GoOn} alt="Happy" className="gif"/>
+          <img src={BingeLearn} alt="Happy" className="gif"/>
+          <img src={AnonymX} alt="Happy" className="gif"/>
+          <img src={GigX} alt="Happy" className="gif"/>
         </div>
       </section>
 
