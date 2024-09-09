@@ -6,8 +6,11 @@ const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
 const cloudinary = require("./utils/cloudinary");
+const nodemailer = require("nodemailer");
 
 
+
+// Sign-up Route
 // Sign-up Route
 router.post("/SignUp", async (req, res) => {
   try {
@@ -21,27 +24,22 @@ router.post("/SignUp", async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new Users({
-      firstName,
-      lastName,
-      email,
-      phoneNum,
-      password: hashedPassword,
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000); 
+    console.log(`Generated OTP for ${email}: ${otp}`); 
+
+
+    newUser = { firstName, lastName, email, phoneNum, otp }; 
+
+    // Send OTP via email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP for Signup Verification",
+      text: `Your OTP for signing up is: ${otp}`,
     });
 
-    await newUser.save();
-    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
-      expiresIn: "1h", // token expiration
-    });
-
-    res
-      .status(201)
-      .json({
-        message: "User signed up successfully",
-        token,
-        _id: newUser._id,
-      });
+    res.status(201).json({ message: "OTP sent to email. Please verify to complete signup." });
   } catch (error) {
     console.error("SignUp Error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -403,5 +401,45 @@ router.post("/uploadVideo", upload.single("video"), function (req, res) {
     }
   );
 });
+
+
+// OTP Verification Route
+router.post("/verifyOtp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Fetch user temporarily stored or fetch from a database
+    const user = newUser; // Replace with actual fetch logic
+
+    if (user && user.email === email && user.otp == otp) {
+      // Save user permanently to the database
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const newUser = new Users({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNum: user.phoneNum,
+        password: hashedPassword,
+      });
+
+      await newUser.save();
+      const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      res.status(201).json({
+        message: "User signed up successfully",
+        token,
+        _id: newUser._id,
+      });
+    } else {
+      res.status(400).json({ message: "Invalid OTP or email." });
+    }
+  } catch (error) {
+    console.error("OTP Verification Error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 module.exports = router;

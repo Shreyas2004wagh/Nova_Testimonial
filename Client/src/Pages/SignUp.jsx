@@ -16,6 +16,8 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false); // State to manage loader visibility
   const [showModal, setShowModal] = useState(false); // State to manage modal visibility
   const [modalMessage, setModalMessage] = useState(""); // Modal message state
+  const [otp, setOtp] = useState(""); // State to manage OTP input
+  const [showOtpInput, setShowOtpInput] = useState(false); // State to manage OTP input visibility
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,7 +27,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Show loader
-
+  
     try {
       const response = await axios.post(
         "https://nova-testimonial.onrender.com/SignUp",
@@ -37,23 +39,11 @@ const SignUp = () => {
           password: form.password,
         }
       );
-
+  
       if (response.status === 201) {
-        setModalMessage("Sign up successful!");
-        setShowModal(true); // Show success modal
-        localStorage.setItem("userEmailSignup", form.email);
-        localStorage.setItem("userId", response.data._id);
-        setForm({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          password: "",
-        });
-        setTimeout(() => {
-          setShowModal(false);
-          navigate("/dashboard"); // Navigate to dashboard after 2 seconds
-        }, 2000); // Modal auto-closes after 2 seconds
+        setModalMessage("OTP sent to your email. Please verify to complete signup.");
+        setShowModal(true); // Show success modal for OTP verification
+        // Here, you need to prompt the user to enter the OTP and verify it using a new function `verifyOtp`.
       } else {
         setModalMessage("Sign up failed!");
         setShowModal(true); // Show failure modal
@@ -71,6 +61,38 @@ const SignUp = () => {
       setLoading(false); // Hide loader
     }
   };
+  
+  // Function to verify OTP
+  const verifyOtp = async (otp) => {
+    try {
+      const response = await axios.post(
+        "https://nova-testimonial.onrender.com/verifyOtp",
+        {
+          email: form.email,
+          otp: otp,
+        }
+      );
+  
+      if (response.status === 201) {
+        setModalMessage("Sign up successful!");
+        setShowModal(true);
+        localStorage.setItem("userEmailSignup", form.email);
+        localStorage.setItem("userId", response.data._id);
+        setTimeout(() => {
+          setShowModal(false);
+          navigate("/dashboard"); // Navigate to dashboard
+        }, 2000);
+      } else {
+        setModalMessage("OTP verification failed!");
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.error("Error during OTP verification:", error);
+      setModalMessage("An error occurred. Please try again later.");
+      setShowModal(true);
+    }
+  };
+  
 
   const handleCloseModal = () => {
     setShowModal(false); // Close modal
