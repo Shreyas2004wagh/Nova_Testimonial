@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Styles/SpaceDetails.css';
+import "./Styles/SpaceDetails.css";
 
 const SpaceDetails = () => {
   const [space, setSpace] = useState(null);
@@ -20,8 +20,7 @@ const SpaceDetails = () => {
 
     const fetchSpaceDetails = async () => {
       try {
-        // Fetch space details
-        const response = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}`);
+        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,7 +28,7 @@ const SpaceDetails = () => {
         setSpace(result);
 
         // Fetch feedback details
-        const feedbackResponse = await fetch(`https://nova-testimonial.onrender.com/space/${publicUrl}/feedbackDetails`);
+        const feedbackResponse = await fetch(`http://localhost:5000/space/${publicUrl}/feedbackDetails`);
         if (!feedbackResponse.ok) {
           throw new Error(`HTTP error! status: ${feedbackResponse.status}`);
         }
@@ -47,16 +46,11 @@ const SpaceDetails = () => {
   }, [publicUrl, navigate]);
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="error-container">
-        <p>Error: {error}</p>
-        <button onClick={() => navigate('/')} className="retry-button">Go Back</button>
-      </div>
-    );
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -64,24 +58,13 @@ const SpaceDetails = () => {
       {space ? (
         <>
           <h1>{space.spacename}</h1>
-          {space.img && (
-            <img 
-              src={space.img} 
-              alt={`${space.spacename} image`} 
-              className="space-image" 
-            />
-          )}
           <p><strong>Header Title:</strong> {space.headerTitle}</p>
           <p><strong>Custom Message:</strong> {space.customMessage}</p>
           <h2>Questions</h2>
           <ul>
-            {space.questions && space.questions.length > 0 ? (
-              space.questions.map((question, index) => (
-                <li key={index}>{question}</li>
-              ))
-            ) : (
-              <p>No questions available.</p>
-            )}
+            {space.questions.map((question, index) => (
+              <li key={index}>{question}</li>
+            ))}
           </ul>
           <h2>Feedback</h2>
           {feedback.length === 0 ? (
@@ -93,16 +76,12 @@ const SpaceDetails = () => {
                   <h4>{fb.name}</h4>
                   <p><strong>Email:</strong> {fb.email}</p>
                   <div className="response">
-                    {fb.responses && fb.responses.length > 0 ? (
-                      fb.responses.map((response, idx) => (
-                        <p key={idx}>
-                          <strong>Question:</strong> {response.question}<br />
-                          <strong>Answer:</strong> {response.answer}
-                        </p>
-                      ))
-                    ) : (
-                      <p>No responses available.</p>
-                    )}
+                    {fb.responses.map((response, idx) => (
+                      <p key={idx}>
+                        <strong>Question:</strong> {response.question}<br />
+                        <strong>Answer:</strong> {response.answer}
+                      </p>
+                    ))}
                   </div>
                 </div>
               ))}
