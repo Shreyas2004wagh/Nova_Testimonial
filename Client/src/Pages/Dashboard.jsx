@@ -25,7 +25,7 @@ const Dashboard = () => {
           throw new Error('User ID not found in local storage');
         }
 
-        const response = await fetch(`https://nova-testimonial.onrender.com/getSpacesByUserId/${userId}`);
+        const response = await fetch(`http://localhost:5000/getSpacesByUserId/${userId}`);
         
         if (response.status === 404) {
           setSpaces([]);  // No spaces found, so set spaces to an empty array
@@ -43,7 +43,7 @@ const Dashboard = () => {
 
           // Fetch feedback counts for the first space (if any spaces exist)
           if (result.length > 0) {
-            const feedbackCountsResponse = await fetch(`https://nova-testimonial.onrender.com/space/${result[0].publicUrl}/feedbackCounts`);
+            const feedbackCountsResponse = await fetch(`http://localhost:5000/space/${result[0].publicUrl}/feedbackCounts`);
             if (!feedbackCountsResponse.ok) {
               throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
             }

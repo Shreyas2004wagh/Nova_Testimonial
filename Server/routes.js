@@ -7,11 +7,8 @@ const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
 const cloudinary = require("./utils/cloudinary");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
-
-
-// Sign-up Route
-// Sign-up Route
 router.post("/SignUp", async (req, res) => {
   try {
     const { firstName, lastName, email, password, phoneNum } = req.body;
@@ -24,22 +21,25 @@ router.post("/SignUp", async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000); 
-    console.log(`Generated OTP for ${email}: ${otp}`); 
-
-
-    newUser = { firstName, lastName, email, phoneNum, otp }; 
-
-    // Send OTP via email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Your OTP for Signup Verification",
-      text: `Your OTP for signing up is: ${otp}`,
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new Users({
+      firstName,
+      lastName,
+      email,
+      phoneNum,
+      password: hashedPassword,
     });
 
-    res.status(201).json({ message: "OTP sent to email. Please verify to complete signup." });
+    await newUser.save();
+    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // token expiration
+    });
+
+    res.status(201).json({
+      message: "User signed up successfully",
+      token,
+      _id: newUser._id,
+    });
   } catch (error) {
     console.error("SignUp Error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -119,7 +119,7 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
     console.log('Generated link:', spaceLink);
 
     res.status(201).json({
-      message: "Space created successfully",
+            message: "Space created successfully",
       space: savedSpace,
       link: spaceLink,
     });
@@ -160,53 +160,38 @@ router.get("/space/:publicUrl", async (req, res) => {
   }
 });
 
-router.post(
-  "/space/:publicUrl/feedback",
-  upload.single("video"),
-  async (req, res) => {
-    try {
-      const { publicUrl } = req.params;
-      const { name, email, responses, feedbackType } = req.body;
-      const videoFile = req.file;
+router.post("/space/:publicUrl/feedback", async (req, res) => {
+  try {
+    const { publicUrl } = req.params;
+    const { name, email, responses, feedbackType } = req.body;
 
-      const space = await Space.findOne({ publicUrl });
+    const space = await Space.findOne({ publicUrl });
 
-      if (!space) {
-        return res.status(404).json({ message: "Space not found" });
-      }
-
-      let videoUrl = "";
-      if (feedbackType === "video" && videoFile) {
-        // Upload video to Cloudinary
-        const result = await cloudinary.uploader.upload(videoFile.path, {
-          resource_type: "video",
-        });
-        videoUrl = result.secure_url;
-      }
-
-      const feedback = {
-        name,
-        email,
-        responses: space.questions.map((question, index) => ({
-          question,
-          answer: responses[index] || "",
-        })),
-        feedbackType: feedbackType || "text",
-        video: feedbackType === "video" ? videoUrl : undefined, // Add video URL only if feedback type is "video"
-      };
-
-      space.feedback.push(feedback);
-      await space.save();
-
-      res
-        .status(201)
-        .json({ message: "Feedback submitted successfully", feedback });
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-      res.status(500).json({ message: "Internal server error" });
+    if (!space) {
+      return res.status(404).json({ message: "Space not found" });
     }
+
+    const feedback = {
+      name,
+      email,
+      responses: space.questions.map((question, index) => ({
+        question,
+        answer: responses[index] || "",
+      })),
+      feedbackType: feedbackType || "text",
+    };
+
+    space.feedback.push(feedback);
+    await space.save();
+
+    res
+      .status(201)
+      .json({ message: "Feedback submitted successfully", feedback });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-);
+});
 
 
 router.get("/space/:publicUrl/feedbackDetails", async (req, res) => {
@@ -402,44 +387,121 @@ router.post("/uploadVideo", upload.single("video"), function (req, res) {
   );
 });
 
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or another service
+  auth: {
+    user: process.env.EMAIL_SERVICE, // Ensure this is set in your environment
+    pass: process.env.EMAIL_PASSWORD, // Ensure this is set in your environment
+  },
+});
 
-// OTP Verification Route
-router.post("/verifyOtp", async (req, res) => {
-  const { email, otp } = req.body;
-
+// Forget Password Route
+router.post("/forget-password", async (req, res) => {
   try {
-    // Fetch user temporarily stored or fetch from a database
-    const user = newUser; // Replace with actual fetch logic
+    const { email } = req.body;
 
-    if (user && user.email === email && user.otp == otp) {
-      // Save user permanently to the database
-      const hashedPassword = await bcrypt.hash(user.password, 10);
-      const newUser = new Users({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNum: user.phoneNum,
-        password: hashedPassword,
-      });
-
-      await newUser.save();
-      const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-
-      res.status(201).json({
-        message: "User signed up successfully",
-        token,
-        _id: newUser._id,
-      });
-    } else {
-      res.status(400).json({ message: "Invalid OTP or email." });
+    // Validate if email is provided
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
     }
-  } catch (error) {
-    console.error("OTP Verification Error:", error);
-    res.status(500).json({ message: "Internal server error" });
+
+    // Find user by email
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Generate a 6-digit OTP and set expiration time (10 minutes)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
+    // Store OTP and expiration time in the user's document
+    user.otp = otp;
+    user.otpExpiration = otpExpiration;
+    await user.save();
+
+    // Send OTP email
+    const mailOptions = {
+      from: {
+        name: "Nova", // Customize this based on your application
+        address: process.env.EMAIL_SERVICE,
+      },
+      to: email,
+      subject: "OTP for password reset",
+      text: `Your OTP for resetting the password is: ${otp}. This OTP is valid for 10 minutes.`,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Error sending OTP email:", err);
+        return res.status(500).json({ error: "Error sending OTP email" });
+      }
+
+      console.log("OTP email sent successfully");
+      return res.status(200).json({ message: "OTP sent successfully" });
+    });
+  } catch (err) {
+    console.error("Internal server error:", err);
+    return res
+      .status(500)
+      .json({ error: "Internal Server Error. Please try again later." });
+  }
+});
+
+// Reset Password Route
+router.put("/reset-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    // Log the inputs
+    console.log("Email:", email);
+    console.log("Received OTP:", otp);
+
+    // Validate that email, OTP, and new password are provided
+    if (!email || !otp || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Email, OTP, and new password are required" });
+    }
+
+    // Find the user by email
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Log the stored OTP for comparison
+    console.log("Stored OTP:", user.otp);
+
+    // Validate the OTP (trim and lowercase to avoid format issues)
+    if (user.otp.trim() !== otp.trim()) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    // Check if OTP has expired
+    if (Date.now() > user.otpExpiration) {
+      return res.status(400).json({ error: "OTP expired" });
+    }
+
+    // Hash the new password using bcrypt
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Reset the password and clear OTP fields
+    user.password = hashedPassword;
+    user.otp = null;
+    user.otpExpiration = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successfully" });
+  } catch (err) {
+    console.error("Internal server error:", err);
+    return res
+      .status(500)
+      .json({ error: "Internal Server Error. Please try again later." });
   }
 });
 
 
+
 module.exports = router;
+ 

@@ -11,7 +11,7 @@ const Login = () => {
     password: '',
   });
 
-  const [loading, setLoading] = useState(false); // State to manage loader visibility
+  const [loading, setLoading] = useState(false); 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -23,10 +23,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show loader
+    setLoading(true);
 
     try {
-      const response = await axios.post('https://nova-testimonial.onrender.com/login', {
+      const response = await axios.post('http://localhost:5000/login', {
         email: form.email,
         password: form.password,
       });
@@ -49,6 +49,9 @@ const Login = () => {
     navigate('/dashboard');
   };
 
+  const handleResetPassword = () => {
+    navigate('/reset-password');  // Redirect to reset password page
+  };
 
   return (
     <div className="login-container">
@@ -95,6 +98,11 @@ const Login = () => {
             Continue
           </button>
         </form>
+
+        {/* Add Reset Password Button */}
+        <button onClick={handleResetPassword} className="reset-password-button">
+          Reset Password
+        </button>
       </div>
     </div>
   );
