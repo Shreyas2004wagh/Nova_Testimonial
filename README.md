@@ -1,7 +1,3 @@
-Here’s the README for the **Nova_Testimonial** project with setup instructions:
-
----
-
 # Nova_Testimonial
 
 Welcome to **Nova_Testimonial**! This project is an innovative platform that allows users to collect, manage, and display video testimonials using the MERN stack (MongoDB, Express.js, React, Node.js).
