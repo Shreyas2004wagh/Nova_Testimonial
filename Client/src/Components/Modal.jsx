@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import '../Components/Modal.css';
 
 const Modal = ({ message, onClose }) => {
@@ -10,6 +10,11 @@ const Modal = ({ message, onClose }) => {
       </div>
     </div>
   );
+};
+
+Modal.propTypes = {
+  message: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default Modal;

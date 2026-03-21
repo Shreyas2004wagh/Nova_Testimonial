@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 const ResetPasswordPage = () => {
@@ -15,7 +15,7 @@ const ResetPasswordPage = () => {
       setMessage(response.data.message);
       setError('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error sending OTP');
+      setError(err.response?.data?.message || err.response?.data?.error || 'Error sending OTP');
       setMessage('');
     }
   };
@@ -31,7 +31,7 @@ const ResetPasswordPage = () => {
       setMessage(response.data.message);
       setError('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error resetting password');
+      setError(err.response?.data?.message || err.response?.data?.error || 'Error resetting password');
       setMessage('');
     }
   };

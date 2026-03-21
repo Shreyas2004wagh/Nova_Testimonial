@@ -1,12 +1,10 @@
-import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Styles/LandingPage.css';
 import Designer from "../Images/Designer.png";
-import { useNavigate } from 'react-router-dom';
 import GoOn from '../Images/GoOnLogo.png';
 import BingeLearn from '../Images/BingeLogo.png';
 import GigX from '../Images/GigX.png';
 import AnonymX from '../Images/AnonymXLogo.jpeg';
-
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -41,18 +39,18 @@ const LandingPage = () => {
             In minutes, you can collect text and video testimonials from your
             customers with no need for a developer or website hosting.
           </p>
-          <button className="try-free-btn">Try FREE now</button>
-          <a href="#" className="pricing-link">Check out our plans here →</a>
+          <button className="try-free-btn" onClick={handleSignUpClick}>Try FREE now</button>
+          <Link to="/signup" className="pricing-link">Check out our plans here -&gt;</Link>
         </div>
       </section>
 
       <section className="trusted-customers-section">
         <h2 className="fade-in">Trusted by</h2>
         <div className="customer-logos">
-          <img src={GoOn} alt="Happy" className="gif"/>
-          <img src={BingeLearn} alt="Happy" className="gif"/>
-          <img src={AnonymX} alt="Happy" className="gif"/>
-          <img src={GigX} alt="Happy" className="gif"/>
+          <img src={GoOn} alt="GoOn logo" className="gif" />
+          <img src={BingeLearn} alt="BingeLearn logo" className="gif" />
+          <img src={AnonymX} alt="AnonymX logo" className="gif" />
+          <img src={GigX} alt="GigX logo" className="gif" />
         </div>
       </section>
 
@@ -79,6 +77,6 @@ const LandingPage = () => {
       </footer>
     </div>
   );
-}
+};
 
 export default LandingPage;

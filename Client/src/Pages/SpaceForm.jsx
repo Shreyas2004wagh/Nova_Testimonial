@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Styles/SpaceForm.css';
 
@@ -38,7 +38,7 @@ const SpaceForm = () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       alert("User ID is not found in local storage. Please log in again.");
-      setLoading(true); 
+      setLoading(false);
       return;
     }
 

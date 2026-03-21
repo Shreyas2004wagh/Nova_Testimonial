@@ -1,4 +1,3 @@
-import React from 'react';
 import '../Components/Loader.css'; // The CSS file
 
 const TypewriterLoader = () => {

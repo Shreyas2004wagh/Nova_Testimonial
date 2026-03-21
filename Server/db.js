@@ -13,13 +13,18 @@ const loadEnv = async () => {
 let connected = async () => {
   await loadEnv();
   try {
-    console.log(process.env.database_URI);
-    await mongoose.connect(process.env.database_URI);
+    const databaseUri = process.env.database_URI || process.env.MONGO_URI;
+    if (!databaseUri) {
+      throw new Error("Database connection string is not configured");
+    }
+
+    await mongoose.connect(databaseUri);
     console.log("Database connected successfully");
   } catch (error) {
     console.log(error);
   }
 };
+
 const isConnected = () => {
   return mongoose.connection.readyState === 1;
 };

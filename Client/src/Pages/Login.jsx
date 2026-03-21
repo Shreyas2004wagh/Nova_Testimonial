@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader'; 
 import Modal from '../Components/Modal'; 
 import './Styles/Login.css';
@@ -61,7 +61,7 @@ const Login = () => {
         <h1>Nova</h1>
         <p>Welcome to Nova</p>
         <p>Receive and manage all feedback from customers.</p>
-        <a href="/signup">Don't have an account? Sign up</a>
+        <Link to="/signup">Don&apos;t have an account? Sign up</Link>
       </div>
       <div className="login-form">
         <h2>Login</h2>
@@ -91,7 +91,7 @@ const Login = () => {
               required
             />
             <div className="forgot-password">
-              <a href="/forgot-password">Forgot Password?</a>
+              <Link to="/reset-password">Forgot Password?</Link>
             </div>
           </div>
           <button type="submit" className="submit-button">

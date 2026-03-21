@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "../Components/Loader";
 import Modal from "../Components/Modal";
 import "./Styles/SignUp.css";
@@ -91,7 +91,7 @@ const SignUp = () => {
           your business.
         </p>
         <p>
-          Already have an account? <a href="/login">Log in here</a>
+          Already have an account? <Link to="/login">Log in here</Link>
         </p>
       </div>
 

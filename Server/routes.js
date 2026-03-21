@@ -7,7 +7,27 @@ const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
 const cloudinary = require("./utils/cloudinary");
 const nodemailer = require("nodemailer");
-const crypto = require("crypto");
+
+const parseQuestions = (questions) => {
+  if (Array.isArray(questions)) {
+    return questions.map((question) => `${question}`.trim()).filter(Boolean);
+  }
+
+  if (typeof questions !== "string" || !questions.trim()) {
+    return [];
+  }
+
+  try {
+    const parsedQuestions = JSON.parse(questions);
+    if (Array.isArray(parsedQuestions)) {
+      return parsedQuestions.map((question) => `${question}`.trim()).filter(Boolean);
+    }
+  } catch (error) {
+    return questions.split(",").map((question) => question.trim()).filter(Boolean);
+  }
+
+  return [];
+};
 
 router.post("/SignUp", async (req, res) => {
   try {
@@ -50,6 +70,10 @@ router.post("/SignUp", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
     const user = await Users.findOne({ email });
 
     if (!user) {
@@ -85,9 +109,11 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
       starRatings,
       user_Id,
     } = req.body;
+    const parsedQuestions = parseQuestions(questions);
+    const parsedStarRatings = starRatings === true || starRatings === "true";
 
-    if (!user_Id) {
-      return res.status(400).json({ message: "User ID is required" });
+    if (!user_Id || !spacename || !publicUrl) {
+      return res.status(400).json({ message: "Space name, public URL, and user ID are required" });
     }
 
     const existingSpace = await Space.findOne({ publicUrl });
@@ -107,8 +133,8 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
       publicUrl,
       headerTitle,
       customMessage,
-      questions,
-      starRatings,
+      questions: parsedQuestions,
+      starRatings: parsedStarRatings,
       user_Id,
       img: imgUrl, 
     });
@@ -226,19 +252,12 @@ router.get("/space/:publicUrl/feedbackCounts", async (req, res) => {
       return res.status(404).json({ message: "Space not found" });
     }
 
-    // Log feedback to check structure
-    console.log("Feedback data:", space.feedback);
-
     const textFeedbackCount = space.feedback.filter(
       (fb) => fb.feedbackType === "text"
     ).length;
     const videoFeedbackCount = space.feedback.filter(
       (fb) => fb.feedbackType === "video"
     ).length;
-
-    // Log counts to verify
-    console.log("Text Feedback Count:", textFeedbackCount);
-    console.log("Video Feedback Count:", videoFeedbackCount);
 
     res.status(200).json({ textFeedbackCount, videoFeedbackCount });
   } catch (error) {
@@ -251,7 +270,7 @@ router.get("/space/:publicUrl/feedbackCounts", async (req, res) => {
 // Get All Users Route
 router.get("/users", async (req, res) => {
   try {
-    const users = await Users.find();
+    const users = await Users.find().select("-password -otp -otpExpiration");
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });
@@ -262,7 +281,7 @@ router.get("/users", async (req, res) => {
 router.get("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await Users.findById(userId);
+    const user = await Users.findById(userId).select("-password -otp -otpExpiration");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -278,10 +297,15 @@ router.get("/user/:id", async (req, res) => {
 router.put("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    const updatedUser = await Users.findByIdAndUpdate(userId, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const { firstName, lastName, email, phoneNum } = req.body;
+    const updatedUser = await Users.findByIdAndUpdate(
+      userId,
+      { firstName, lastName, email, phoneNum },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password -otp -otpExpiration");
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -437,7 +461,6 @@ router.post("/forget-password", async (req, res) => {
         return res.status(500).json({ error: "Error sending OTP email" });
       }
 
-      console.log("OTP email sent successfully");
       return res.status(200).json({ message: "OTP sent successfully" });
     });
   } catch (err) {
@@ -453,10 +476,6 @@ router.put("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
 
-    // Log the inputs
-    console.log("Email:", email);
-    console.log("Received OTP:", otp);
-
     // Validate that email, OTP, and new password are provided
     if (!email || !otp || !newPassword) {
       return res
@@ -470,16 +489,17 @@ router.put("/reset-password", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Log the stored OTP for comparison
-    console.log("Stored OTP:", user.otp);
+    if (!user.otp || !user.otpExpiration) {
+      return res.status(400).json({ error: "OTP is not available for this user" });
+    }
 
-    // Validate the OTP (trim and lowercase to avoid format issues)
+    // Validate the OTP
     if (user.otp.trim() !== otp.trim()) {
       return res.status(400).json({ error: "Invalid OTP" });
     }
 
     // Check if OTP has expired
-    if (Date.now() > user.otpExpiration) {
+    if (Date.now() > user.otpExpiration.getTime()) {
       return res.status(400).json({ error: "OTP expired" });
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CgProfile } from 'react-icons/cg';
 import './Styles/Dashboard.css';
@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [textFeedbackCount, setTextFeedbackCount] = useState(0);
   const [videoFeedbackCount, setVideoFeedbackCount] = useState(0);
-  const [cookieConsent, setCookieConsent] = useState(null); // Track cookie consent state
+  const [cookieConsent, setCookieConsent] = useState(() => localStorage.getItem('cookieConsent')); // Track cookie consent state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +28,9 @@ const Dashboard = () => {
         const response = await fetch(`http://localhost:5000/getSpacesByUserId/${userId}`);
         
         if (response.status === 404) {
-          setSpaces([]);  // No spaces found, so set spaces to an empty array
+          setSpaces([]);
+          setTextFeedbackCount(0);
+          setVideoFeedbackCount(0);
         } else if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         } else {
@@ -38,19 +40,29 @@ const Dashboard = () => {
           if (cookieConsent === 'accepted') {
             // Extract space names from the result and store them in cookies if consent is given
             const spaceNames = result.map(space => space.spacename);
-            document.cookie = `spaceNames=${JSON.stringify(spaceNames)}; path=/; max-age=${24 * 60 * 60}`;
+            document.cookie = `spaceNames=${encodeURIComponent(JSON.stringify(spaceNames))}; path=/; max-age=${24 * 60 * 60}`;
           }
 
-          // Fetch feedback counts for the first space (if any spaces exist)
-          if (result.length > 0) {
-            const feedbackCountsResponse = await fetch(`http://localhost:5000/space/${result[0].publicUrl}/feedbackCounts`);
-            if (!feedbackCountsResponse.ok) {
-              throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
-            }
-            const feedbackCounts = await feedbackCountsResponse.json();
-            setTextFeedbackCount(feedbackCounts.textFeedbackCount);
-            setVideoFeedbackCount(feedbackCounts.videoFeedbackCount);
-          }
+          const feedbackCounts = await Promise.all(
+            result.map(async (space) => {
+              const feedbackCountsResponse = await fetch(
+                `http://localhost:5000/space/${space.publicUrl}/feedbackCounts`
+              );
+
+              if (!feedbackCountsResponse.ok) {
+                throw new Error(`HTTP error! status: ${feedbackCountsResponse.status}`);
+              }
+
+              return feedbackCountsResponse.json();
+            })
+          );
+
+          setTextFeedbackCount(
+            feedbackCounts.reduce((sum, counts) => sum + counts.textFeedbackCount, 0)
+          );
+          setVideoFeedbackCount(
+            feedbackCounts.reduce((sum, counts) => sum + counts.videoFeedbackCount, 0)
+          );
         }
 
       } catch (err) {
@@ -82,14 +94,6 @@ const Dashboard = () => {
     localStorage.setItem('cookieConsent', 'rejected');
   };
 
-  useEffect(() => {
-    // Check for existing cookie consent in local storage
-    const existingConsent = localStorage.getItem('cookieConsent');
-    if (existingConsent) {
-      setCookieConsent(existingConsent);
-    }
-  }, []);
-
   return (
     <div className="dashboard">
       <nav className="navbar">
@@ -103,7 +107,7 @@ const Dashboard = () => {
         </div>
       </nav>
       <header className="hero-section">
-        <h1><mark>A robust way to get</mark> customer's feedbacks</h1>
+        <h1><mark>A robust way to get</mark> customer&apos;s feedbacks</h1>
         <p>Collect simple customer feedback throughout their journey, improve their experience to drive real change</p>
         <div className="cta-buttons">
           <button className="start-feedback">Start Collecting Feedback</button>
