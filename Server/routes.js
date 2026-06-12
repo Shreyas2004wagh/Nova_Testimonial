@@ -2,11 +2,42 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
 const cloudinary = require("./utils/cloudinary");
 const nodemailer = require("nodemailer");
+
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+  }
+
+  return process.env.JWT_SECRET;
+};
+
+const getClientBaseUrl = () => {
+  return (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
+};
+
+const normalizePublicUrl = (publicUrl) => {
+  if (typeof publicUrl !== "string") {
+    return "";
+  }
+
+  return publicUrl.trim().replace(/^\/+|\/+$/g, "");
+};
+
+const removeUploadedFile = (filePath) => {
+  if (!filePath) {
+    return;
+  }
+
+  fs.promises.unlink(filePath).catch((error) => {
+    console.warn("Unable to remove temporary upload:", error.message);
+  });
+};
 
 const parseQuestions = (questions) => {
   if (Array.isArray(questions)) {
@@ -36,6 +67,7 @@ router.post("/SignUp", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const jwtSecret = getJwtSecret();
     const existingUser = await Users.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
@@ -51,7 +83,7 @@ router.post("/SignUp", async (req, res) => {
     });
 
     await newUser.save();
-    const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email: newUser.email }, jwtSecret, {
       expiresIn: "1h", // token expiration
     });
 
@@ -86,7 +118,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email: user.email }, getJwtSecret(), {
       expiresIn: "1h",
     });
 
@@ -112,11 +144,13 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
     const parsedQuestions = parseQuestions(questions);
     const parsedStarRatings = starRatings === true || starRatings === "true";
 
-    if (!user_Id || !spacename || !publicUrl) {
+    const normalizedPublicUrl = normalizePublicUrl(publicUrl);
+
+    if (!user_Id || !spacename || !normalizedPublicUrl) {
       return res.status(400).json({ message: "Space name, public URL, and user ID are required" });
     }
 
-    const existingSpace = await Space.findOne({ publicUrl });
+    const existingSpace = await Space.findOne({ publicUrl: normalizedPublicUrl });
     if (existingSpace) {
       return res.status(400).json({ message: "Public URL already exists" });
     }
@@ -124,13 +158,17 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
     // Upload image to Cloudinary
     let imgUrl = '';
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      imgUrl = result.secure_url;
+      try {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        imgUrl = result.secure_url;
+      } finally {
+        removeUploadedFile(req.file.path);
+      }
     }
 
     const newSpace = new Space({
       spacename,
-      publicUrl,
+      publicUrl: normalizedPublicUrl,
       headerTitle,
       customMessage,
       questions: parsedQuestions,
@@ -140,7 +178,7 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
     });
 
     const savedSpace = await newSpace.save();
-    const spaceLink = `http://localhost:5173/${publicUrl}`;
+    const spaceLink = `${getClientBaseUrl()}/${normalizedPublicUrl}`;
 
     console.log('Generated link:', spaceLink);
 
@@ -197,14 +235,21 @@ router.post("/space/:publicUrl/feedback", async (req, res) => {
       return res.status(404).json({ message: "Space not found" });
     }
 
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required" });
+    }
+
+    const responseList = Array.isArray(responses) ? responses : [];
+    const normalizedFeedbackType = feedbackType === "video" ? "video" : "text";
+
     const feedback = {
       name,
       email,
       responses: space.questions.map((question, index) => ({
         question,
-        answer: responses[index] || "",
+        answer: responseList[index] || "",
       })),
-      feedbackType: feedbackType || "text",
+      feedbackType: normalizedFeedbackType,
     };
 
     space.feedback.push(feedback);
@@ -319,7 +364,7 @@ router.put("/user/:id", async (req, res) => {
 
 router.post("/space/:publicUrl/addLink", async (req, res) => {
   try {
-    const { publicUrl } = req.params;
+    const publicUrl = normalizePublicUrl(req.params.publicUrl);
     const { link } = req.body;
 
     if (!link) {
@@ -372,9 +417,20 @@ router.get("/getSpacesByUserId/:userId", async (req, res) => {
 });
 
 router.post("/upload", upload.single("image"), function (req, res) {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "Image file is required" });
+  }
+
+  if (!req.file.mimetype.startsWith("image/")) {
+    removeUploadedFile(req.file.path);
+    return res.status(400).json({ success: false, message: "Only image files are allowed" });
+  }
+
   cloudinary.uploader.upload(req.file.path, function (err, result) {
+    removeUploadedFile(req.file.path);
+
     if (err) {
-      console.log("Image cannot be uploaed:", err);
+      console.log("Image cannot be uploaded:", err);
       return res.status(500).json({
         success: false,
         message: "Error uploading image",
@@ -390,10 +446,21 @@ router.post("/upload", upload.single("image"), function (req, res) {
 });
 
 router.post("/uploadVideo", upload.single("video"), function (req, res) {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "Video file is required" });
+  }
+
+  if (!req.file.mimetype.startsWith("video/")) {
+    removeUploadedFile(req.file.path);
+    return res.status(400).json({ success: false, message: "Only video files are allowed" });
+  }
+
   cloudinary.uploader.upload(
     req.file.path,
     { resource_type: "video" },
     function (err, result) {
+      removeUploadedFile(req.file.path);
+
       if (err) {
         console.log("Video cannot be uploaded:", err);
         return res.status(500).json({

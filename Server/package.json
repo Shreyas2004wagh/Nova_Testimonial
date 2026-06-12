@@ -2,10 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "routes.js",
+  "main": "server.js",
   "scripts": {
-    "test": "node --check server.js && node --check routes.js && node --check db.js",
-    "start": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "node --check server.js && node --check routes.js && node --check db.js && node --check uploads.js && node --check utils/multer.js && node --check utils/cloudinary.js"
   },
   "keywords": [],
   "author": "",
