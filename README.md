@@ -1,107 +1,168 @@
-# Nova_Testimonial
+# Nova Testimonial
 
-Welcome to **Nova_Testimonial**! This project is an innovative platform that allows users to collect, manage, and display video testimonials using the MERN stack (MongoDB, Express.js, React, Node.js).
+Nova Testimonial is a MERN application for collecting customer testimonials. Users can sign up, create public feedback spaces, share a generated link, and review submitted feedback from their dashboard.
 
-## Features
+## What It Does
 
-- **User Authentication**: Secure signup and login functionality using JWT (JSON Web Tokens).
-- **Video Uploads**: Users can easily upload and manage video testimonials.
-- **Dashboard**: A comprehensive dashboard to view, manage, and organize all testimonials.
-- **User Profiles**: Personalized profiles for users to manage their submitted testimonials.
-- **Responsive Design**: The platform is fully responsive, ensuring a smooth experience on both desktop and mobile devices.
+- Creates user accounts and logs users in with JWT-based authentication.
+- Lets a user create testimonial spaces with a public URL, header text, custom message, questions, optional star-rating setting, and an optional image.
+- Generates a shareable public testimonial link for each space.
+- Collects text feedback from public visitors and stores answers against the configured questions.
+- Shows per-space feedback details and dashboard-level text/video feedback counts.
+- Supports Cloudinary image/video upload endpoints.
+- Supports password reset by email OTP through Nodemailer.
+- Stores users, spaces, feedback, and generated links in MongoDB.
 
 ## Tech Stack
 
-- **Frontend**: React, Redux, React Router
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB
-- **Authentication**: JWT (JSON Web Tokens)
+- Frontend: React, Vite, React Router, Axios, React Icons
+- Backend: Node.js, Express, Mongoose, Multer, Cloudinary, Nodemailer
+- Database: MongoDB
+- Auth: JSON Web Tokens, bcrypt password hashing
 
-## Setup Instructions
+## Project Structure
 
-Follow these steps to get the project up and running locally:
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-username/nova_testimonial.git
-cd nova_testimonial
+```text
+Nova_Testimonial/
+  Client/                 React + Vite frontend
+    src/Pages/            Main route pages
+    src/config/api.js     Frontend API base URL helper
+  Server/                 Express API
+    models/               Mongoose models
+    utils/                Cloudinary and Multer helpers
+    routes.js             API routes
+    server.js             API entry point
 ```
 
-### 2. Install Dependencies
+## Prerequisites
 
-Navigate to both the `client` and `server` directories to install the necessary dependencies.
+- Node.js and npm
+- MongoDB, either local or hosted through MongoDB Atlas
+- Cloudinary account, required only if you use image/video upload features
+- Gmail app password or another Gmail-compatible app password, required only for password reset OTP email
 
-#### Client
+## Environment Variables
 
-```bash
-cd client
-npm install
+Copy the example files and fill in your values:
+
+```powershell
+Copy-Item Server\.env.example Server\.env
+Copy-Item Client\.env.example Client\.env
 ```
 
-#### Server
+Server variables:
 
-```bash
-cd ../server
-npm install
-```
-
-### 3. Environment Variables
-
-In the `server` directory, create a `.env` file and add your environment variables for MongoDB connection and JWT secret.
-
-Example `.env` file:
-
-```bash
-MONGO_URI=your-mongodb-uri
-JWT_SECRET=your-jwt-secret
+```env
 PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/nova_testimonial
+JWT_SECRET=replace-with-a-long-random-secret
+CLIENT_URL=http://localhost:5173
+
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_SECRET_KEY=your-cloudinary-api-secret
+
+EMAIL_SERVICE=your-gmail-address@gmail.com
+EMAIL_PASSWORD=your-gmail-app-password
 ```
 
-### 4. Run the Application
+Client variables:
 
-Now you can start both the client and server.
+```env
+VITE_API_BASE_URL=http://localhost:5000
+```
 
-#### Running the Client
+`CLIENT_URL` is used by the server when it returns newly generated testimonial links. `VITE_API_BASE_URL` is used by the frontend when calling the API.
 
-```bash
-cd client
+## Setup
+
+Install backend dependencies:
+
+```powershell
+cd Server
+npm install
+```
+
+Install frontend dependencies:
+
+```powershell
+cd ..\Client
+npm install
+```
+
+Start the backend:
+
+```powershell
+cd ..\Server
 npm run dev
 ```
 
-This will start the React frontend on [http://localhost:3000](http://localhost:3000).
+The API runs at `http://localhost:5000` by default.
 
-#### Running the Server
+Start the frontend in another terminal:
 
-```bash
-cd ../server
-npm start
+```powershell
+cd Client
+npm run dev
 ```
 
-This will start the Node.js backend on [http://localhost:5000](http://localhost:5000).
+Vite runs at `http://localhost:5173` by default. Open that URL in your browser.
 
-### 5. Access the Application
+## Available Scripts
 
-Once both the client and server are running, open your browser and go to:
+Backend:
 
-```bash
-http://localhost:3000
+```powershell
+cd Server
+npm run dev     # start API with nodemon
+npm start       # start API with node
+npm test        # syntax-check server files
 ```
 
-You will now be able to access the **Nova_Testimonial** platform and begin using the features.
+Frontend:
 
----
+```powershell
+cd Client
+npm run dev     # start Vite dev server
+npm run build   # create production build
+npm run lint    # run ESLint
+npm run preview # preview production build
+```
 
-### Contributing
+## Core API Routes
 
-Feel free to fork the project and submit pull requests for improvements or bug fixes!
+- `POST /SignUp` - create a user account.
+- `POST /login` - log in and receive a token plus user ID.
+- `POST /addSpace` - create a testimonial space, optionally with an image file.
+- `GET /getSpacesByUserId/:userId` - list spaces owned by a user.
+- `GET /space/:publicUrl` - fetch public space details.
+- `POST /space/:publicUrl/feedback` - submit text feedback for a space.
+- `GET /space/:publicUrl/feedbackDetails` - fetch submitted feedback for a space.
+- `GET /space/:publicUrl/feedbackCounts` - fetch text/video feedback counts.
+- `POST /upload` - upload an image to Cloudinary.
+- `POST /uploadVideo` - upload an MP4 video to Cloudinary.
+- `POST /forget-password` - send OTP for password reset.
+- `PUT /reset-password` - reset password with OTP.
 
----
+## Notes and Troubleshooting
 
-### License
+- If sign up or login fails with a server error, verify `JWT_SECRET` is set in `Server/.env`.
+- If spaces do not load, verify MongoDB is running and `MONGO_URI` is correct.
+- If generated links point to the wrong frontend URL, update `CLIENT_URL` in `Server/.env`.
+- If frontend requests go to the wrong API URL, update `VITE_API_BASE_URL` in `Client/.env` and restart Vite.
+- If uploads fail, verify all Cloudinary variables are set.
+- If password reset email fails, use a Gmail app password rather than your normal Gmail password.
+- Uploaded files are staged in the system temp directory before Cloudinary upload. The app accepts GIF, JPEG, PNG, and MP4 files up to 5 MB.
 
-This project is licensed under the MIT License.
+## Verification
 
----
+Current checks used for this repo:
 
-Feel free to customize or extend the setup instructions based on your specific environment.
+```powershell
+cd Server
+npm test
+
+cd ..\Client
+npm run lint
+npm run build
+```
