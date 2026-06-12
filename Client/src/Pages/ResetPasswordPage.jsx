@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { apiUrl } from '../config/api';
 
 const ResetPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ const ResetPasswordPage = () => {
   // Function to handle sending the OTP
   const handleSendOtp = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/forget-password', { email });
+      const response = await axios.post(apiUrl('/forget-password'), { email });
       setMessage(response.data.message);
       setError('');
     } catch (err) {
@@ -23,7 +24,7 @@ const ResetPasswordPage = () => {
   // Function to handle resetting the password
   const handleResetPassword = async () => {
     try {
-      const response = await axios.put('http://localhost:5000/reset-password', { // Changed to PUT
+      const response = await axios.put(apiUrl('/reset-password'), {
         email,
         otp,
         newPassword,

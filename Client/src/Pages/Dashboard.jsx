@@ -7,6 +7,7 @@ import palmGif from '../Images/palm.gif';
 import angryGif from '../Images/angry.gif';
 import cryingGif from '../Images/crying.gif';
 import treeImg from '../Images/Tree.svg';
+import { apiUrl } from '../config/api';
 
 const Dashboard = () => {
   const [spaces, setSpaces] = useState([]);
@@ -25,7 +26,7 @@ const Dashboard = () => {
           throw new Error('User ID not found in local storage');
         }
 
-        const response = await fetch(`http://localhost:5000/getSpacesByUserId/${userId}`);
+        const response = await fetch(apiUrl(`/getSpacesByUserId/${userId}`));
         
         if (response.status === 404) {
           setSpaces([]);
@@ -46,7 +47,7 @@ const Dashboard = () => {
           const feedbackCounts = await Promise.all(
             result.map(async (space) => {
               const feedbackCountsResponse = await fetch(
-                `http://localhost:5000/space/${space.publicUrl}/feedbackCounts`
+                apiUrl(`/space/${space.publicUrl}/feedbackCounts`)
               );
 
               if (!feedbackCountsResponse.ok) {

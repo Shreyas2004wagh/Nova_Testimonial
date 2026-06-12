@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../config/api';
 import "./Styles/SpaceDetails.css";
 
 const SpaceDetails = () => {
@@ -20,7 +21,7 @@ const SpaceDetails = () => {
 
     const fetchSpaceDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
+        const response = await fetch(apiUrl(`/space/${publicUrl}`));
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -28,7 +29,7 @@ const SpaceDetails = () => {
         setSpace(result);
 
         // Fetch feedback details
-        const feedbackResponse = await fetch(`http://localhost:5000/space/${publicUrl}/feedbackDetails`);
+        const feedbackResponse = await fetch(apiUrl(`/space/${publicUrl}/feedbackDetails`));
         if (!feedbackResponse.ok) {
           throw new Error(`HTTP error! status: ${feedbackResponse.status}`);
         }

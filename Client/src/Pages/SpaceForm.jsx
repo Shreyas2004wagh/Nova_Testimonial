@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiUrl } from '../config/api';
 import './Styles/SpaceForm.css';
 
 const SpaceForm = () => {
@@ -66,7 +67,7 @@ const SpaceForm = () => {
       }
 
       // Post space data and image to server
-      const response = await fetch('http://localhost:5000/addSpace', {
+      const response = await fetch(apiUrl('/addSpace'), {
         method: 'POST',
         body: formDataObj,
       });
@@ -81,6 +82,7 @@ const SpaceForm = () => {
       } else {
         const result = await response.json();
         const link = result.link;
+        const publicUrl = result.space?.publicUrl || formData.publicUrl;
         setGeneratedLink(link);
         setShowModal(true);
   
@@ -88,7 +90,7 @@ const SpaceForm = () => {
         sessionStorage.setItem('generatedLink', link);
   
         // Make a request to add the link to the Space document in the database
-        await fetch(`http://localhost:5000/space/${formData.publicUrl}/addLink`, {
+        await fetch(apiUrl(`/space/${publicUrl}/addLink`), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

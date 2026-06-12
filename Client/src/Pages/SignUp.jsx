@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../Components/Loader";
 import Modal from "../Components/Modal";
+import { apiUrl } from "../config/api";
 import "./Styles/SignUp.css";
 
 const SignUp = () => {
@@ -28,7 +29,7 @@ const SignUp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/SignUp",
+        apiUrl("/SignUp"),
         {
           firstName: form.firstName,
           lastName: form.lastName,

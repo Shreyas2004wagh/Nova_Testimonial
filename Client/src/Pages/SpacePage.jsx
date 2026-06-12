@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { apiUrl } from '../config/api';
 import "./Styles/SpacePage.css";
 
 const SpacePage = () => {
@@ -14,7 +15,7 @@ const SpacePage = () => {
   useEffect(() => {
     const fetchSpaceData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/space/${publicUrl}`);
+        const response = await fetch(apiUrl(`/space/${publicUrl}`));
         if (!response.ok) {
           throw new Error('Space not found');
         }
@@ -45,7 +46,7 @@ const SpacePage = () => {
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:5000/space/${publicUrl}/feedback`, {
+    const response = await fetch(apiUrl(`/space/${publicUrl}/feedback`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

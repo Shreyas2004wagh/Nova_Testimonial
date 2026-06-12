@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../config/api";
 import './Styles/Profile.css'; // Create a CSS file for styling
 
 const Profile = () => {
@@ -24,7 +25,7 @@ const Profile = () => {
           throw new Error('User ID not found in local storage');
         }
 
-        const response = await fetch(`http://localhost:5000/user/${userId}`);
+        const response = await fetch(apiUrl(`/user/${userId}`));
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,7 +65,7 @@ const Profile = () => {
   const handleSaveClick = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await fetch(`http://localhost:5000/user/${userId}`, {
+      const response = await fetch(apiUrl(`/user/${userId}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
