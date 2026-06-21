@@ -2,10 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
-const Router = require("./routes.js");
 const { isConnected, connected } = require("./db.js");
 
 dotenv.config();
+
+const Router = require("./routes.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
