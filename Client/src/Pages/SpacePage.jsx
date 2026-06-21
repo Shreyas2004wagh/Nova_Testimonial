@@ -71,12 +71,12 @@ const SpacePage = () => {
   }
 
   return (
-    <div>
+    <div className="space-page">
       <h1>{spaceData.headerTitle}</h1>
       <p>{spaceData.customMessage}</p>
 
       <form onSubmit={handleSubmitFeedback}>
-        <div>
+        <div className="form-group">
           <label>Name</label>
           <input
             type="text"
@@ -85,7 +85,7 @@ const SpacePage = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Email</label>
           <input
             type="email"
@@ -96,7 +96,7 @@ const SpacePage = () => {
         </div>
 
         {spaceData.questions.map((question, index) => (
-          <div key={index}>
+          <div className="form-group" key={index}>
             <label>{question}</label>
             <textarea
               value={feedback.responses[index]}
@@ -105,7 +105,9 @@ const SpacePage = () => {
           </div>
         ))}
 
-        <button type="submit">Submit Feedback</button>
+        <div className="button-container">
+          <button type="submit">Submit Feedback</button>
+        </div>
       </form>
     </div>
   );

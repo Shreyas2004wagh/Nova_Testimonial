@@ -35,12 +35,11 @@ const LandingPage = () => {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="fade-in">Get testimonials from your customers with ease</h1>
-          <p className="fade-in">Collecting testimonials is hard, we get it! So we built Testimonial.
-            In minutes, you can collect text and video testimonials from your
-            customers with no need for a developer or website hosting.
+          <p className="fade-in">Collecting testimonials is hard, we get it. Nova helps you collect text and video testimonials
+            in minutes, with no need for a developer or website hosting.
           </p>
           <button className="try-free-btn" onClick={handleSignUpClick}>Try FREE now</button>
-          <Link to="/signup" className="pricing-link">Check out our plans here -&gt;</Link>
+          <Link to="/signup" className="pricing-link">Create your first testimonial space -&gt;</Link>
         </div>
       </section>
 
@@ -60,20 +59,20 @@ const LandingPage = () => {
           Copy and paste our HTML code to add the Wall Of Love to your website.
           We support any no-code platform (Webflow, WordPress, you name it!).
         </p>
-        <div className="testimonial-videos">
+        <div className="testimonial-cards">
           <div className="testimonial fade-in">
-            <video src="video1.mp4" controls></video>
-            <p>Testimonial from Customer 1</p>
+            <p className="quote">&quot;Nova made it easy to collect useful customer stories right after each launch.&quot;</p>
+            <p className="customer">Product Founder</p>
           </div>
           <div className="testimonial fade-in">
-            <video src="video2.mp4" controls></video>
-            <p>Testimonial from Customer 2</p>
+            <p className="quote">&quot;We shared one link and had organized feedback ready in the dashboard.&quot;</p>
+            <p className="customer">Growth Lead</p>
           </div>
         </div>
       </section>
 
       <footer>
-        <p>&copy; 2024 Your Testimonial Website. All rights reserved.</p>
+        <p>&copy; 2026 Nova Testimonial. All rights reserved.</p>
       </footer>
     </div>
   );
