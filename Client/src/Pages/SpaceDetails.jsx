@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import "./Styles/SpaceDetails.css";
 
+const getSelectedPublicUrl = () => {
+  try {
+    const selectedSpace = JSON.parse(sessionStorage.getItem('selectedSpace') || 'null');
+    return selectedSpace?.publicUrl || '';
+  } catch (error) {
+    sessionStorage.removeItem('selectedSpace');
+    return '';
+  }
+};
+
 const SpaceDetails = () => {
   const [space, setSpace] = useState(null);
   const [feedback, setFeedback] = useState([]);
@@ -11,7 +21,7 @@ const SpaceDetails = () => {
   const navigate = useNavigate();
 
   // Get publicUrl from session storage
-  const publicUrl = JSON.parse(sessionStorage.getItem('selectedSpace'))?.publicUrl;
+  const [publicUrl] = useState(getSelectedPublicUrl);
 
   useEffect(() => {
     if (!publicUrl) {

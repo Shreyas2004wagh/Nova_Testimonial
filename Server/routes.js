@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const mongoose = require("mongoose");
 const { Users } = require("./models/User");
 const { Space } = require("./models/Space");
 const upload = require("./utils/multer");
@@ -38,6 +39,13 @@ const removeUploadedFile = (filePath) => {
     console.warn("Unable to remove temporary upload:", error.message);
   });
 };
+
+const rejectAndRemoveUpload = (file, res, status, body) => {
+  removeUploadedFile(file?.path);
+  return res.status(status).json(body);
+};
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const parseQuestions = (questions) => {
   if (Array.isArray(questions)) {
@@ -147,12 +155,23 @@ router.post("/addSpace", upload.single("image"), async (req, res) => {
     const normalizedPublicUrl = normalizePublicUrl(publicUrl);
 
     if (!user_Id || !spacename || !normalizedPublicUrl) {
-      return res.status(400).json({ message: "Space name, public URL, and user ID are required" });
+      return rejectAndRemoveUpload(req.file, res, 400, {
+        message: "Space name, public URL, and user ID are required",
+      });
+    }
+
+    if (!isValidObjectId(user_Id)) {
+      return rejectAndRemoveUpload(req.file, res, 400, { message: "Invalid user ID" });
+    }
+
+    const ownerExists = await Users.exists({ _id: user_Id });
+    if (!ownerExists) {
+      return rejectAndRemoveUpload(req.file, res, 404, { message: "User not found" });
     }
 
     const existingSpace = await Space.findOne({ publicUrl: normalizedPublicUrl });
     if (existingSpace) {
-      return res.status(400).json({ message: "Public URL already exists" });
+      return rejectAndRemoveUpload(req.file, res, 400, { message: "Public URL already exists" });
     }
 
     // Upload image to Cloudinary
@@ -326,6 +345,10 @@ router.get("/users", async (req, res) => {
 router.get("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const user = await Users.findById(userId).select("-password -otp -otpExpiration");
 
     if (!user) {
@@ -342,6 +365,10 @@ router.get("/user/:id", async (req, res) => {
 router.put("/user/:id", async (req, res) => {
   try {
     const userId = req.params.id;
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const { firstName, lastName, email, phoneNum } = req.body;
     const updatedUser = await Users.findByIdAndUpdate(
       userId,
@@ -394,6 +421,10 @@ router.post("/space/:publicUrl/addLink", async (req, res) => {
 router.get("/getSpacesByUserId/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const spaces = await Space.find({ user_Id: userId });
     if (!spaces.length) {
       return res.status(404).json({ message: "No spaces found for this user" });
